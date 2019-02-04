@@ -60,8 +60,7 @@ void render(const size_t &width, const size_t &height, const char *out_path) {
     const Vec3f cam_pos = Vec3f(0, 0, 0);
     const Vec3f cam_ori = Vec3f(0, 0, 1.0f);
     const float cam_fov = PI / 2.0f;
-    const float plane_dist = 1.0f;
-    Camera camera(cam_pos, cam_ori, cam_fov, plane_dist);
+    Camera camera(cam_pos, cam_ori, cam_fov);
 
     Vec3f background_colour = Vec3f(0.2, 0.7, 0.8);
 

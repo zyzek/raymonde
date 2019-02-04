@@ -1,0 +1,18 @@
+* Orientable camera
+* Describe derivation of mathematical bits in comments
+* Lighting (diffuse, specular reflections)
+    - from camera ray intersection, shoot incident ray to light sources
+    - shadows: stop if occluded by objects, including ourself (move point out slighly in direction of normal)
+    - proportional to intensity, albedo, inversely as the square of distance
+        -- consider scatter cones or directional reflectance
+* Coloured lights
+* Physically-based material properties
+* Reflections (maybe with a fuzziness parameter? Is that even possible? Render surface to texture then blur?)
+* indirect illumination
+* Transparent objects with refractive indices (Snell's law)
+* Generalised object opacity, transparency, scattering
+* Area lights
+* Texture/environment maps
+* Meshes
+* Interactive viewport
+* volumetrics

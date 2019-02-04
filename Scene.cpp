@@ -66,7 +66,10 @@ void Scene::reorder() {
     }
 }
 
-
+/*
+ * Return the colour of the ray if it collides with anything,
+ * otherwise return the background colour.
+ */
 Vec3f Scene::raycast(const Ray3f &ray) {
     Vec3f colour = this->background.diffuse_colour;
     for (auto sphere : spheres) {
@@ -77,6 +80,10 @@ Vec3f Scene::raycast(const Ray3f &ray) {
     return colour;
 }
 
+/*
+ * Given a width, a height, and a buffer to render to,
+ * fill the buffer with an image of the scene.
+ */
 void Scene::render(const size_t &width, const size_t &height, std::vector<Vec3f> &framebuffer) {
     const float x_fov_tan = std::tan(camera.fov / 2.0f);
     const float y_fov_tan = x_fov_tan * (float) height / (float) width;
