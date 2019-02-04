@@ -1,4 +1,6 @@
-#include "vector.hpp"
+#pragma once
+
+#include "Vector.hpp"
 
 struct Material {
     Vec3f diffuse_colour;
@@ -7,4 +9,3 @@ struct Material {
 
     explicit Material(const Vec3f &diffuse) : diffuse_colour(diffuse) {}
 };
-
