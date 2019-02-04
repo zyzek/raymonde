@@ -3,10 +3,13 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include "vector.hpp"
-#include "sphere.hpp"
 
-#define PI 3.1415926535f
+#include "constants.hpp"
+#include "Vector.hpp"
+#include "Sphere.hpp"
+#include "Camera.hpp"
+#include "Scene.hpp"
+
 
 float clamp_unit(float f) {
     return std::max(0.f, std::min(1.f, f));
@@ -50,50 +53,30 @@ void render_sine(int width, int height, const char *out_path) {
 }
 
 /*
- * Cast a ray from an origin, towards a sphere, returning the colour of the collision point.
- */
-Vec3f raycast(const Vec3f &origin, const Vec3f &direction, const Sphere &sphere) {
-    Vec3f background_colour = Vec3f(0.2, 0.7, 0.8);
-    float sphere_dist = std::numeric_limits<float>::max();
-    if (!sphere.ray_intersects(origin, direction, sphere_dist)) {
-        return background_colour;
-    }
-    return sphere.material.diffuse_colour;
-}
-
-/*
  * Render an image of the given dimensions to a file at the given path.
  */
-void render(size_t width, size_t height, const char *outFilePath) {
-    std::vector<Vec3f> framebuffer(width * height);
+void render(const size_t &width, const size_t &height, const char *out_path) {
+    // Camera parameters
+    const Vec3f cam_pos = Vec3f(0, 0, 0);
+    const Vec3f cam_ori = Vec3f(0, 0, 1.0f);
+    const float cam_fov = PI / 2.0f;
+    const float plane_dist = 1.0f;
+    Camera camera(cam_pos, cam_ori, cam_fov, plane_dist);
+
+    Vec3f background_colour = Vec3f(0.2, 0.7, 0.8);
+
+    Scene scene(camera, Material(background_colour));
 
     // Object to render
-    const Vec3f position(10, -5, 16);
-    const float radius(3.0);
-    const Vec3f colour(0.4, 0.4, 0.3);
-    const Sphere sphere(position, radius, Material(colour));
+    scene.add_sphere(Vec3f(10, -5, 16), 3.0, Material(Vec3f(0.4, 0.4, 0.3)));
+    scene.add_sphere(Vec3f(-5, 5, 13), 4.0, Material(Vec3f(0.8, 0.4, 0.8)));
+    scene.add_sphere(Vec3f(-2, 3, 20), 5.0, Material(Vec3f(0.2, 0.6, 0.3)));
 
-    // Camera parameters
-    const Vec3f camPos = Vec3f(0, 0, 0);
-    const float planeDist = 1.0f;
-    const float xFov = PI / 2.0f;
-    const float xFovTan = std::tan(xFov / 2.0f);
-    const float yFovTan = xFovTan * (float) height / (float) width;
-    const float xComp = 2.0f * planeDist * xFovTan / ((float) width - 1);
-    const float yComp = -2.0f * planeDist * yFovTan / ((float) height - 1);
-
-#pragma omp parallel for
-    for (ssize_t j = 0; j < height; j++) {
-        const float y = (j - height / 2.0f) * yComp;
-        for (ssize_t i = 0; i < width; i++) {
-            const float x = (i - width / 2.0f) * xComp;
-            Vec3f ray = Vec3f(x, y, planeDist);
-            framebuffer[i + j * width] = raycast(camPos, ray, sphere);
-        }
-    }
+    std::vector<Vec3f> framebuffer(width * height);
+    scene.render(width, height, framebuffer);
 
     std::ofstream ofs;
-    ofs.open(outFilePath);
+    ofs.open(out_path);
     ofs << "P6\n" << width << " " << height << "\n255\n";
 
     for (size_t p = 0; p < width * height; p++) {
@@ -109,7 +92,7 @@ void render(size_t width, size_t height, const char *outFilePath) {
 int main() {
     const size_t width = 1024;
     const size_t height = 786;
-    char outFilePath[] = "./out.ppm";
-    render(width, height, outFilePath);
+    char out_path[] = "./out.ppm";
+    render(width, height, out_path);
     return 0;
 }
