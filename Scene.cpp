@@ -30,6 +30,17 @@ void Scene::add_sphere(const Sphere &sphere) {
     add_sphere(sphere.centre, sphere.radius, sphere.material);
 }
 
+/*
+ * Add a new light to the scene
+ */
+void Scene::add_light(const Pos3f &position, const Vec3f &colour, const float &brightness) {
+    lights.emplace_back(position, colour, brightness);
+}
+
+void Scene::add_light(const Light &light) {
+    add_light(light.position, light.colour, light.brightness);
+}
+
 
 /*
  * Remove and destroy the given sphere.
@@ -67,13 +78,27 @@ void Scene::reorder() {
 }
 
 /*
+ * Return whether the given ray intersects with any sphere in the scene,
+ * returning the ray located at the first collision point if it exists,
+ * normal to the surface at that point.
+ */
+bool Scene::ray_intersects(const Ray3f &ray, Ray3f &normal) const {
+    for (auto sphere : spheres) {
+        if (sphere.first->ray_intersects(ray, normal)) {
+            break;
+        }
+    }
+    return true;
+}
+
+/*
  * Return the colour of the ray if it collides with anything,
  * otherwise return the background colour.
  */
 Vec3f Scene::raycast(const Ray3f &ray) {
     Vec3f colour = this->background.diffuse_colour;
     for (auto sphere : spheres) {
-        if (sphere.first->raycast(ray, colour)) {
+        if (sphere.first->raycast(ray, colour, *this)) {
             break;
         }
     }

@@ -2,6 +2,9 @@
 
 #include "Material.hpp"
 #include "Ray.hpp"
+#include "Scene.hpp"
+
+struct Scene;
 
 struct Sphere {
     Pos3f centre;
@@ -13,7 +16,7 @@ struct Sphere {
 
     bool ray_intersects(const Ray3f &ray, Ray3f &normal) const;
 
-    bool raycast(const Ray3f& ray, Vec3f &colour) const;
+    bool raycast(const Ray3f& ray, Vec3f &colour, const Scene& scene) const;
 
     float nearest_distance(const Pos3f &position) const;
 

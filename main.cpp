@@ -66,10 +66,14 @@ void render(const size_t &width, const size_t &height, const char *out_path) {
 
     Scene scene(camera, Material(background_colour));
 
-    // Object to render
+    // Objects to render
     scene.add_sphere(Pos3f(10, -5, 16), 3.0, Material(Vec3f(0.4, 0.4, 0.3)));
     scene.add_sphere(Pos3f(-5, 5, 13), 4.0, Material(Vec3f(0.8, 0.4, 0.8)));
     scene.add_sphere(Pos3f(-2, 3, 20), 5.0, Material(Vec3f(0.2, 0.6, 0.3)));
+
+    // Light to render
+    scene.add_light(Pos3f(0, 10, 30), Vec3f(1.0, 0.0, 0.0), 100.0);
+    scene.add_light(Pos3f(0, -10, 10), Vec3f(0.0, 1.0, 0.0), 100.0);
 
     std::vector<Vec3f> framebuffer(width * height);
     scene.render(width, height, framebuffer);

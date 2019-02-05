@@ -4,47 +4,47 @@
 #include <cassert>
 #include <iostream>
 
-template<size_t DIM, typename T>
+template<size_t D, typename T>
 struct Pos;
 
-template<size_t DIM, typename T>
+template<size_t D, typename T>
 struct Vec {
-    Vec<DIM, T>() {
-        for (size_t i = 0; i < DIM; i++) {
+    Vec<D, T>() {
+        for (size_t i = 0; i < D; i++) {
             data_[i] = T();
         }
     }
 
     T &operator[](const size_t i) {
-        assert(i < DIM);
+        assert(i < D);
         return data_[i];
     }
 
     const T &operator[](const size_t i) const {
-        assert(i < DIM);
+        assert(i < D);
         return data_[i];
     }
 
     T length() const {
         T result = T();
-        for (size_t i = 0; i < DIM; i++) {
+        for (size_t i = 0; i < D; i++) {
             result += data_[i] * data_[i];
         }
         return std::sqrt(result);
     }
 
-    Vec<DIM, T> &normalise(T l = 1) {
+    Vec<D, T> &normalise(T l = 1) {
         *this = *this * (l / length());
         return *this;
     }
 
-    Vec<DIM, T> unit(T l = 1) const {
+    Vec<D, T> unit(T l = 1) const {
         return *this * (l / length());
     }
 
-    Vec<DIM, T> position() const {
-        Pos<DIM, T> p();
-        for (size_t i = 0; i < DIM; i++) {
+    Vec<D, T> position() const {
+        Pos<D, T> p();
+        for (size_t i = 0; i < D; i++) {
             p[i] = this[i];
         }
         return p;
@@ -52,7 +52,7 @@ struct Vec {
 
 private:
 
-    T data_[DIM];
+    T data_[D];
 };
 
 typedef Vec<3, float> Vec3f;
@@ -100,83 +100,92 @@ Vec<3, T> cross(const Vec<3, T> &v1, const Vec<3, T> &v2) {
 }
 
 // Dot product
-template<size_t DIM, typename T>
-T operator*(const Vec<DIM, T> &lhs, const Vec<DIM, T> &rhs) {
+template<size_t D, typename T>
+T operator*(const Vec<D, T> &lhs, const Vec<D, T> &rhs) {
     T result;
-    for (size_t i = 0; i < DIM; i++) {
+    for (size_t i = 0; i < D; i++) {
         result += lhs[i] * rhs[i];
     }
     return result;
 }
 
+// Hadamard (element-wise) product
+template<size_t D, typename T>
+Vec<D, T> hadamard(Vec<D, T> l, const Vec<D, T> &r) {
+    for (size_t i = 0; i < D; i++) {
+        l[i] += r[i];
+    }
+    return l;
+}
+
 // Vector sum
-template<size_t DIM, typename T>
-Vec<DIM, T> operator+(Vec<DIM, T> lhs, const Vec<DIM, T> &rhs) {
-    for (size_t i = 0; i < DIM; i++) {
+template<size_t D, typename T>
+Vec<D, T> operator+(Vec<D, T> lhs, const Vec<D, T> &rhs) {
+    for (size_t i = 0; i < D; i++) {
         lhs[i] += rhs[i];
     }
     return lhs;
 }
 
 // Vector difference
-template<size_t DIM, typename T>
-Vec<DIM, T> operator-(Vec<DIM, T> lhs, const Vec<DIM, T> &rhs) {
-    for (size_t i = 0; i < DIM; i++) {
+template<size_t D, typename T>
+Vec<D, T> operator-(Vec<D, T> lhs, const Vec<D, T> &rhs) {
+    for (size_t i = 0; i < D; i++) {
         lhs[i] -= rhs[i];
     }
     return lhs;
 }
 
 // Multiplication by a scalar (left and right)
-template<size_t DIM, typename T, typename U>
-Vec<DIM, T> operator*(Vec<DIM, T> lhs, const U &rhs) {
-    for (size_t i = 0; i < DIM; i++) {
+template<size_t D, typename T, typename U>
+Vec<D, T> operator*(Vec<D, T> lhs, const U &rhs) {
+    for (size_t i = 0; i < D; i++) {
         lhs[i] *= rhs;
     }
     return lhs;
 }
 
-template<size_t DIM, typename T, typename U>
-Vec<DIM, T> operator*(const U &lhs, const Vec<DIM, T> &rhs) {
+template<size_t D, typename T, typename U>
+Vec<D, T> operator*(const U &lhs, const Vec<D, T> &rhs) {
     return rhs * lhs;
 }
 
 // Division by a scalar
-template<size_t DIM, typename T, typename U>
-Vec<DIM, T> operator/(Vec<DIM, T> lhs, const U &rhs) {
-    for (size_t i = 0; i < DIM; i++) {
+template<size_t D, typename T, typename U>
+Vec<D, T> operator/(Vec<D, T> lhs, const U &rhs) {
+    for (size_t i = 0; i < D; i++) {
         lhs[i] /= rhs;
     }
     return lhs;
 }
 
 // Vector negation
-template<size_t DIM, typename T>
-Vec<DIM, T> operator-(const Vec<DIM, T> &v) {
+template<size_t D, typename T>
+Vec<D, T> operator-(const Vec<D, T> &v) {
     return v * T(-1);
 }
 
 // Scalar projection, v onto u.
-template<size_t DIM, typename T>
-T scalarProjection(const Vec<DIM, T> &v, const Vec<DIM, T> &u) {
+template<size_t D, typename T>
+T scalarProjection(const Vec<D, T> &v, const Vec<D, T> &u) {
     return (v * u) / u.length();
 }
 
 // Vector projection, v onto u.
-template<size_t DIM, typename T>
-Vec<DIM, T> projection(const Vec<DIM, T> &v, const Vec<DIM, T> &u) {
+template<size_t D, typename T>
+Vec<D, T> projection(const Vec<D, T> &v, const Vec<D, T> &u) {
     T uNorm = u.length();
     return ((v * u) / (uNorm * uNorm)) * u;
 }
 
-template<size_t DIM, typename T>
-std::ostream &operator<<(std::ostream &out, const Vec<DIM, T> &v) {
+template<size_t D, typename T>
+std::ostream &operator<<(std::ostream &out, const Vec<D, T> &v) {
     out << "Vec(";
-    if (DIM != 0) {
-        for (size_t i = 0; i < DIM - 1; i++) {
+    if (D != 0) {
+        for (size_t i = 0; i < D - 1; i++) {
             out << v[i] << ", ";
         }
-        out << v[DIM - 1];
+        out << v[D - 1];
     }
     out << ")";
     return out;
@@ -184,27 +193,27 @@ std::ostream &operator<<(std::ostream &out, const Vec<DIM, T> &v) {
 
 
 // Positions are distinct from vectors.
-template<size_t DIM, typename T>
+template<size_t D, typename T>
 struct Pos {
-    Pos<DIM, T>() {
-        for (size_t i = 0; i < DIM; i++) {
+    Pos<D, T>() {
+        for (size_t i = 0; i < D; i++) {
             data_[i] = T();
         }
     }
 
     T &operator[](const size_t i) {
-        assert(i < DIM);
+        assert(i < D);
         return data_[i];
     }
 
     const T &operator[](const size_t i) const {
-        assert(i < DIM);
+        assert(i < D);
         return data_[i];
     }
 
-    Vec<DIM, T> vector() const {
-        Vec<DIM, T> v();
-        for (size_t i = 0; i < DIM; i++) {
+    Vec<D, T> vector() const {
+        Vec<D, T> v();
+        for (size_t i = 0; i < D; i++) {
             v[i] = this[i];
         }
         return v;
@@ -212,7 +221,7 @@ struct Pos {
 
 private:
 
-    T data_[DIM];
+    T data_[D];
 };
 
 typedef Pos<3, float> Pos3f;
@@ -240,39 +249,43 @@ struct Pos<3, T> {
     T x, y, z;
 };
 
+template<size_t D, typename T>
+T distance(const Pos<D, T> &p1, const Pos<D, T> &p2) {
+    return (p1 - p2).length();
+}
 
 // A difference in positions yields a vector.
-template<size_t DIM, typename T>
-Vec<DIM, T> operator-(const Pos<DIM, T> &end, const Pos<DIM, T> &start) {
-    Vec<DIM, T> v;
-    for (size_t i = 0; i < DIM; i++) {
+template<size_t D, typename T>
+Vec<D, T> operator-(const Pos<D, T> &end, const Pos<D, T> &start) {
+    Vec<D, T> v;
+    for (size_t i = 0; i < D; i++) {
         v[i] = end[i] - start[i];
     }
     return v;
 }
 
 // The sum of a vector and a position yields a new position.
-template<size_t DIM, typename T>
-Pos<DIM, T> operator+(Pos<DIM, T> pos, const Vec<DIM, T> &vec) {
-    for (size_t i = 0; i < DIM; i++) {
+template<size_t D, typename T>
+Pos<D, T> operator+(Pos<D, T> pos, const Vec<D, T> &vec) {
+    for (size_t i = 0; i < D; i++) {
         pos[i] += vec[i];
     }
     return pos;
 }
 
-template<size_t DIM, typename T>
-Pos<DIM, T> operator+(const Vec<DIM, T> &vec, const Pos<DIM, T> &pos) {
+template<size_t D, typename T>
+Pos<D, T> operator+(const Vec<D, T> &vec, const Pos<D, T> &pos) {
     return pos + vec;
 }
 
-template<size_t DIM, typename T>
-std::ostream &operator<<(std::ostream &out, const Pos<DIM, T> &v) {
+template<size_t D, typename T>
+std::ostream &operator<<(std::ostream &out, const Pos<D, T> &v) {
     out << "Pos(";
-    if (DIM != 0) {
-        for (size_t i = 0; i < DIM - 1; i++) {
+    if (D != 0) {
+        for (size_t i = 0; i < D - 1; i++) {
             out << v[i] << ", ";
         }
-        out << v[DIM - 1];
+        out << v[D - 1];
     }
     out << ")";
     return out;

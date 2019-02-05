@@ -10,4 +10,4 @@ add_executable(raymonde
         Material.hpp
         README.md
         Sphere.hpp
-        Vector.hpp Scene.cpp Scene.hpp Camera.hpp constants.hpp Sphere.cpp Ray.hpp Material.cpp)
+        Vector.hpp Scene.cpp Scene.hpp Camera.hpp constants.hpp Sphere.cpp Ray.hpp Material.cpp Light.hpp Light.cpp)

@@ -1,12 +1,12 @@
 #include <iostream>
 
-#include "Sphere.hpp"
 #include "constants.hpp"
+#include "Sphere.hpp"
 
 /*
  * Return whether the given ray intersects with this sphere,
- * returning the distance between the ray's position and the
- * first intersection point into dist if it exists.
+ * returning the ray located at the first collision point if it exists,
+ * normal to the surface at that point.
  */
 bool Sphere::ray_intersects(const Ray3f &ray, Ray3f &normal) const {
     const Vec3f to_sphere = centre - ray.position;
@@ -40,13 +40,32 @@ bool Sphere::ray_intersects(const Ray3f &ray, Ray3f &normal) const {
  * occurred, and colour of the first collision point with the sphere,
  * if it exists.
  */
-bool Sphere::raycast(const Ray3f &ray, Vec3f &colour) const {
+bool Sphere::raycast(const Ray3f &ray, Vec3f &colour, const Scene& scene) const {
     Ray3f normal;
     if (!ray_intersects(ray, normal)) {
         return false;
     }
-    const float intensity = ray.direction.unit() * normal.direction.unit();
-    colour = material.diffuse_colour * intensity;
+
+    // Move the normal slightly out from the sphere so it doesn't self-occlude.
+    normal.position = ((normal.position - centre) * 1.0001) + centre;
+
+    Vec3f lightColour(0,0,0);
+
+    // For each light: cast a ray towards the light, checking if it hit something first.
+    for (auto light : scene.lights) {
+        auto incident_ray = Ray3f(normal.position, light.position - normal.position);
+        Ray3f incident_collision_normal;
+        bool collided = scene.ray_intersects(incident_ray, incident_collision_normal);
+
+        // If the ray never collided with geometry, the light wasn't occluded.
+        // If the collision point is behind the light, no occlusion.
+        if (!collided || distance(normal.position, incident_collision_normal.position) < distance(normal.position, light.position)) {
+            const float intensity = incident_ray.direction.unit() * normal.direction.unit();
+            lightColour = lightColour + (light.illumination(normal.position) * intensity);
+        }
+    }
+
+    colour = hadamard(lightColour, material.diffuse_colour);
     return true;
 }
 
