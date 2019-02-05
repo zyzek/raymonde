@@ -4,11 +4,14 @@
 
 template<size_t DIM, typename T>
 struct Ray {
-    Vec<DIM, T> base;
+    Pos<DIM, T> position;
     Vec<DIM, T> direction;
 
-    Ray<DIM, T>(const Vec<DIM, T> &b, const Vec<DIM, T> &d)
-            : base(b), direction(d) {}
+    Ray<DIM, T>()
+            : position(), direction() {}
+            
+    Ray<DIM, T>(const Pos<DIM, T> &pos, const Vec<DIM, T> &dir)
+            : position(pos), direction(dir) {}
 };
 
 typedef Ray<3, float> Ray3f;

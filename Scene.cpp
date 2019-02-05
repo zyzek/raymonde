@@ -2,7 +2,7 @@
 
 #include "Scene.hpp"
 
-void add_by_dist(Sphere *const sphere, const Vec3f &reference, decltype(Scene::spheres) &spheres) {
+void add_by_dist(Sphere *const sphere, const Pos3f &reference, decltype(Scene::spheres) &spheres) {
     const float dist = sphere->nearest_distance(reference);
     auto p = std::make_pair(sphere, dist);
 
@@ -21,7 +21,7 @@ void add_by_dist(Sphere *const sphere, const Vec3f &reference, decltype(Scene::s
  * Efficiency is worst/expected case linear for a single insertion,
  * thus quadratic for a sequence; not great.
  */
-void Scene::add_sphere(const Vec3f &position, const float &radius, const Material &material) {
+void Scene::add_sphere(const Pos3f &position, const float &radius, const Material &material) {
     auto sphere = new Sphere(position, radius, material);
     add_by_dist(sphere, camera.position, spheres);
 }

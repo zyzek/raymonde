@@ -1,3 +1,4 @@
+* Distinguish properly between positions and vectors in types
 * Orientable camera
 * Describe derivation of mathematical bits in comments
 * Lighting (diffuse, specular reflections)

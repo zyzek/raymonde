@@ -4,17 +4,18 @@
 #include "Ray.hpp"
 
 struct Sphere {
-    Vec3f centre;
+    Pos3f centre;
     float radius;
     Material material;
 
-    Sphere(const Vec3f &c, const float &r, const Material &m)
+    Sphere(const Pos3f &c, const float &r, const Material &m)
             : centre(c), radius(r), material(m) {}
 
-    bool ray_intersects(const Ray3f &ray, float &dist) const;
+    bool ray_intersects(const Ray3f &ray, Ray3f &normal) const;
 
     bool raycast(const Ray3f& ray, Vec3f &colour) const;
 
-    float nearest_distance(const Vec3f &position) const;
+    float nearest_distance(const Pos3f &position) const;
+
 };
 

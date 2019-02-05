@@ -5,14 +5,14 @@
 
 /*
  * Return whether the given ray intersects with this sphere,
- * returning the distance between the ray's base and the
+ * returning the distance between the ray's position and the
  * first intersection point into dist if it exists.
  */
-bool Sphere::ray_intersects(const Ray3f &ray, float &dist) const {
-    const Vec3f to_sphere = centre - ray.base;
+bool Sphere::ray_intersects(const Ray3f &ray, Ray3f &normal) const {
+    const Vec3f to_sphere = centre - ray.position;
 
     // Compute the projection of the sphere's position vector onto the ray.
-    const Vec3f unit_ray = ray.direction.normalised();
+    const Vec3f unit_ray = ray.direction.unit();
     const Vec3f p = projection(to_sphere, ray.direction);
     const float p_dist = (p - to_sphere).length();
 
@@ -27,10 +27,11 @@ bool Sphere::ray_intersects(const Ray3f &ray, float &dist) const {
     // Otherwise use the nearest.
     const float semi_dist = std::sqrt(radius * radius - p_dist * p_dist);
     if (semi_dist < MERGE_EPSILON || p_dist < radius) {
-        dist = (((p.length() + semi_dist) * unit_ray) - ray.base).length();
+        normal.position = (p.length() + semi_dist) * unit_ray + ray.position;
     } else {
-        dist = (((p.length() - semi_dist) * unit_ray) - ray.base).length();
+        normal.position = (p.length() - semi_dist) * unit_ray + ray.position;
     }
+    normal.direction = (normal.position - centre).unit();
     return true;
 }
 
@@ -40,18 +41,19 @@ bool Sphere::ray_intersects(const Ray3f &ray, float &dist) const {
  * if it exists.
  */
 bool Sphere::raycast(const Ray3f &ray, Vec3f &colour) const {
-    float sphere_dist = std::numeric_limits<float>::max();
-    if (!ray_intersects(ray, sphere_dist)) {
+    Ray3f normal;
+    if (!ray_intersects(ray, normal)) {
         return false;
     }
-    colour = material.diffuse_colour;
+    const float intensity = ray.direction.unit() * normal.direction.unit();
+    colour = material.diffuse_colour * intensity;
     return true;
 }
 
 /*
  * Return the nearest distance from the given point to the sphere's surface.
  */
-float Sphere::nearest_distance(const Vec3f &position) const {
+float Sphere::nearest_distance(const Pos3f &position) const {
     const float dist = (centre - position).length();
     return dist > radius ? dist - radius : radius - dist;
 }

@@ -5,6 +5,9 @@
 #include <iostream>
 
 template<size_t DIM, typename T>
+struct Pos;
+
+template<size_t DIM, typename T>
 struct Vec {
     Vec<DIM, T>() {
         for (size_t i = 0; i < DIM; i++) {
@@ -35,8 +38,16 @@ struct Vec {
         return *this;
     }
 
-    Vec<DIM, T> normalised(T l = 1) const {
+    Vec<DIM, T> unit(T l = 1) const {
         return *this * (l / length());
+    }
+
+    Vec<DIM, T> position() const {
+        Pos<DIM, T> p();
+        for (size_t i = 0; i < DIM; i++) {
+            p[i] = this[i];
+        }
+        return p;
     }
 
 private:
@@ -71,8 +82,12 @@ struct Vec<3, T> {
         return *this;
     }
 
-    Vec<3, T> normalised(T l = 1) const {
+    Vec<3, T> unit(T l = 1) const {
         return *this * (l / length());
+    }
+
+    Vec<3, T> position() const {
+        return Pos<3, T>(x, y, z);
     }
 
     T x, y, z;
@@ -122,11 +137,8 @@ Vec<DIM, T> operator*(Vec<DIM, T> lhs, const U &rhs) {
 }
 
 template<size_t DIM, typename T, typename U>
-Vec<DIM, T> operator*(const U &lhs, Vec<DIM, T> rhs) {
-    for (size_t i = 0; i < DIM; i++) {
-        rhs[i] *= lhs;
-    }
-    return rhs;
+Vec<DIM, T> operator*(const U &lhs, const Vec<DIM, T> &rhs) {
+    return rhs * lhs;
 }
 
 // Division by a scalar
@@ -157,7 +169,6 @@ Vec<DIM, T> projection(const Vec<DIM, T> &v, const Vec<DIM, T> &u) {
     return ((v * u) / (uNorm * uNorm)) * u;
 }
 
-// Stream out operator
 template<size_t DIM, typename T>
 std::ostream &operator<<(std::ostream &out, const Vec<DIM, T> &v) {
     out << "Vec(";
@@ -171,3 +182,98 @@ std::ostream &operator<<(std::ostream &out, const Vec<DIM, T> &v) {
     return out;
 }
 
+
+// Positions are distinct from vectors.
+template<size_t DIM, typename T>
+struct Pos {
+    Pos<DIM, T>() {
+        for (size_t i = 0; i < DIM; i++) {
+            data_[i] = T();
+        }
+    }
+
+    T &operator[](const size_t i) {
+        assert(i < DIM);
+        return data_[i];
+    }
+
+    const T &operator[](const size_t i) const {
+        assert(i < DIM);
+        return data_[i];
+    }
+
+    Vec<DIM, T> vector() const {
+        Vec<DIM, T> v();
+        for (size_t i = 0; i < DIM; i++) {
+            v[i] = this[i];
+        }
+        return v;
+    }
+
+private:
+
+    T data_[DIM];
+};
+
+typedef Pos<3, float> Pos3f;
+
+template<typename T>
+struct Pos<3, T> {
+    Pos<3, T>() : x(T()), y(T()), z(T()) {}
+
+    Pos<3, T>(T X, T Y, T Z) : x(X), y(Y), z(Z) {}
+
+    T &operator[](const size_t i) {
+        assert(i < 3);
+        return i <= 0 ? x : i == 1 ? y : z;
+    }
+
+    const T &operator[](const size_t i) const {
+        assert(i < 3);
+        return i <= 0 ? x : i == 1 ? y : z;
+    }
+
+    Vec<3, T> vector() const {
+        return Vec<3, T>(x, y, z);
+    }
+
+    T x, y, z;
+};
+
+
+// A difference in positions yields a vector.
+template<size_t DIM, typename T>
+Vec<DIM, T> operator-(const Pos<DIM, T> &end, const Pos<DIM, T> &start) {
+    Vec<DIM, T> v;
+    for (size_t i = 0; i < DIM; i++) {
+        v[i] = end[i] - start[i];
+    }
+    return v;
+}
+
+// The sum of a vector and a position yields a new position.
+template<size_t DIM, typename T>
+Pos<DIM, T> operator+(Pos<DIM, T> pos, const Vec<DIM, T> &vec) {
+    for (size_t i = 0; i < DIM; i++) {
+        pos[i] += vec[i];
+    }
+    return pos;
+}
+
+template<size_t DIM, typename T>
+Pos<DIM, T> operator+(const Vec<DIM, T> &vec, const Pos<DIM, T> &pos) {
+    return pos + vec;
+}
+
+template<size_t DIM, typename T>
+std::ostream &operator<<(std::ostream &out, const Pos<DIM, T> &v) {
+    out << "Pos(";
+    if (DIM != 0) {
+        for (size_t i = 0; i < DIM - 1; i++) {
+            out << v[i] << ", ";
+        }
+        out << v[DIM - 1];
+    }
+    out << ")";
+    return out;
+}

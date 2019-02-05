@@ -57,7 +57,7 @@ void render_sine(int width, int height, const char *out_path) {
  */
 void render(const size_t &width, const size_t &height, const char *out_path) {
     // Camera parameters
-    const Vec3f cam_pos = Vec3f(0, 0, 0);
+    const Pos3f cam_pos = Pos3f(0, 0, 0);
     const Vec3f cam_ori = Vec3f(0, 0, 1.0f);
     const float cam_fov = PI / 2.0f;
     Camera camera(cam_pos, cam_ori, cam_fov);
@@ -67,9 +67,9 @@ void render(const size_t &width, const size_t &height, const char *out_path) {
     Scene scene(camera, Material(background_colour));
 
     // Object to render
-    scene.add_sphere(Vec3f(10, -5, 16), 3.0, Material(Vec3f(0.4, 0.4, 0.3)));
-    scene.add_sphere(Vec3f(-5, 5, 13), 4.0, Material(Vec3f(0.8, 0.4, 0.8)));
-    scene.add_sphere(Vec3f(-2, 3, 20), 5.0, Material(Vec3f(0.2, 0.6, 0.3)));
+    scene.add_sphere(Pos3f(10, -5, 16), 3.0, Material(Vec3f(0.4, 0.4, 0.3)));
+    scene.add_sphere(Pos3f(-5, 5, 13), 4.0, Material(Vec3f(0.8, 0.4, 0.8)));
+    scene.add_sphere(Pos3f(-2, 3, 20), 5.0, Material(Vec3f(0.2, 0.6, 0.3)));
 
     std::vector<Vec3f> framebuffer(width * height);
     scene.render(width, height, framebuffer);

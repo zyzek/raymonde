@@ -19,7 +19,7 @@ struct Scene {
     Scene(const Camera &c, const Material &b)
             : camera(c), background(b), spheres() {}
 
-    void add_sphere(const Vec3f &position, const float &radius, const Material &material);
+    void add_sphere(const Pos3f &position, const float &radius, const Material &material);
 
     void add_sphere(const Sphere &sphere);
 
