@@ -1,24 +1,29 @@
-* Ambient light
-* Orientable camera
-* Ambient occlusion
-* Describe derivation of mathematical bits in comments
 * Specular Highlights
+* Describe derivation of mathematical bits in comments
 * Reflections (maybe with a fuzziness parameter? Is that even possible? Render surface to texture then blur?)
 * Environment maps
 * Transparent objects with refractive indices (Snell's law)
 * Generalised object opacity, transparency, scattering
 * Meshes
-* Textures
-* indirect illumination
+* Procedurally-defined objects (e.g. fractals)
+* Textures (including various lighting maps)
+* Ambient occlusion
+* Indirect illumination
 * Area lights
-* Interactive viewport
-* volumetrics
+* Volumetrics
 * Physically-based material properties
+* Orientable camera
 * Better way of composing scenes
 * Move to GPU
+* Interactive viewport / Real-time rendering
+* Random pixel sampling: build up geometry with sample.
+    - Intelligent ray tracing by a flood fill on the same object
+    - preferentially find boundary (binary search for edge, then trace around outline)
+    - incomplete areas get interpolated from surroundings until filled in
 
 
 DONE:
   * Spheres
   * Diffuse Lighting w/ shadows
   * Coloured lights
+  * Ambient light

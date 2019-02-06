@@ -39,12 +39,13 @@ void render_sine(int width, int height, std::vector<Vec3f> &buffer) {
  */
 void render(const size_t &width, const size_t &height, std::vector<Vec3f> &buffer) {
     // Scene setup
-    const Pos3f cam_pos = Pos3f(0, 0, 0);
-    const Vec3f cam_ori = Vec3f(0, 0, 1.0f);
+    const Pos3f cam_pos(0, 0, 0);
+    const Vec3f cam_ori(0, 0, 1.0f);
     const float cam_fov = PI / 2.0f;
     Camera camera(cam_pos, cam_ori, cam_fov);
-    Vec3f background_colour = Vec3f(0.0, 0.0, 0.0);
-    Scene scene(camera, Material(background_colour));
+    Vec3f background_colour(0.0, 0.0, 0.0);
+    Vec3f ambient_colour(0.05, 0.03, 0.04);
+    Scene scene(camera, Material(background_colour), ambient_colour);
 
     // Colours
     Vec3f white(1.0, 1.0, 1.0);

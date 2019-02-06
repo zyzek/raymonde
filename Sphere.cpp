@@ -55,7 +55,7 @@ Ray3f Sphere::displace_normal_outward(const Ray3f &normal) const {
 Vec3f Sphere::surface_colour(const Ray3f &ray, const Ray3f &collision_normal, const Scene &scene) const {
     Ray3f coll_normal = displace_normal_outward(collision_normal);
 
-    Vec3f surface_lighting(0, 0, 0);
+    Vec3f surface_lighting = scene.ambient_colour;
 
     // For each light: cast a ray towards the light, checking if it hit something first.
     for (auto light : scene.lights) {
