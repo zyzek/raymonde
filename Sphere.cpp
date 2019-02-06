@@ -65,8 +65,8 @@ bool Sphere::raycast(const Ray3f &ray, Vec3f &colour, const Scene &scene) const 
 
         // If the ray never collided with geometry, the light wasn't occluded.
         // If the collision point is behind the light, no occlusion.
-        if (!collided) {
-            //distance(collision_normal.position, incident_collision_normal.position) > distance(collision_normal.position, light.position)) {
+        if (!collided ||
+            distance(collision_normal.position, incident_collision_normal.position) > distance(collision_normal.position, light.position)) {
             const float intensity = incident_ray.direction * collision_normal.direction; // These are both unit vectors.
             surface_lighting = surface_lighting + (light.illumination(collision_normal.position) * intensity);
         }

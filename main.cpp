@@ -84,6 +84,7 @@ void render(const size_t &width, const size_t &height, const char *out_path) {
     }
 
     // Lights
+    scene.add_light(Pos3f(2.5, 0, 10), red+blue+green/4, 2.0);
     scene.add_light(Pos3f(0, 50, 15), red, 1500.0);
     scene.add_light(Pos3f(0, -50, 5), green, 1500.0);
     scene.add_light(Pos3f(50, 0, 15), blue, 1500.0);
