@@ -31,7 +31,7 @@ void Scene::clear() {
 }
 
 /*
- * Return whether the given ray intersects with any sphere in the scene,
+ * Return true iff the given ray intersects with any sphere in the scene,
  * returning. Additionally return:
  *  * A pointer to the sphere which was hit, if any.
  *  * A ray located at the first collision point if it exists,
@@ -40,13 +40,13 @@ void Scene::clear() {
  * Iterates though all objects in the scene to check for collisions,
  * which is not particularly efficient.
  */
-bool Scene::ray_intersection(const Ray3f &ray, Sphere *&sphere_pointer, Ray3f &collision_normal) const {
+bool Scene::raycast(const Ray3f &ray, Sphere *&sphere_pointer, Ray3f &collision_normal) const {
     float dist = std::numeric_limits<float>::max();
     Ray3f current_collision_normal;
     bool collided = false;
 
     for (auto sphere : spheres) {
-        const bool current_collided = sphere->ray_intersection(ray, current_collision_normal);
+        const bool current_collided = sphere->raycast(ray, current_collision_normal);
         if (current_collided) {
             collided = true;
             const float current_dist = distance(ray.position, current_collision_normal.position);
@@ -65,14 +65,13 @@ bool Scene::ray_intersection(const Ray3f &ray, Sphere *&sphere_pointer, Ray3f &c
  * Return the colour of the ray if it collides with anything,
  * otherwise return the background colour.
  */
-Vec3f Scene::raycast(const Ray3f &ray) {
-    Vec3f colour = this->background.diffuse_colour;
+Vec3f Scene::surface_colour(const Ray3f &ray) {
     Sphere *sphere_pointer;
     Ray3f collision_normal;
-    if(ray_intersection(ray, sphere_pointer, collision_normal)) {
-        sphere_pointer->raycast(ray, colour, *this);
+    if(raycast(ray, sphere_pointer, collision_normal)) {
+        return sphere_pointer->surface_colour(ray, collision_normal, *this);
     };
-    return colour;
+    return this->background.diffuse_colour;
 }
 
 /*
@@ -91,7 +90,7 @@ void Scene::render(const size_t &width, const size_t &height, std::vector<Vec3f>
         for (ssize_t i = 0; i < width; i++) {
             const float x = (i - width / 2.0f) * x_comp;
             Ray3f ray = Ray3f(camera.position, Vec3f(x, y, camera.plane_distance));
-            framebuffer[i + j * width] = raycast(ray);
+            framebuffer[i + j * width] = surface_colour(ray);
         }
     }
 }

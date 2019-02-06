@@ -1,6 +1,6 @@
-* Don't redo the raycast.
 * Ambient light
 * Orientable camera
+* Ambient occlusion
 * Describe derivation of mathematical bits in comments
 * Specular Highlights
 * Reflections (maybe with a fuzziness parameter? Is that even possible? Render surface to texture then blur?)
@@ -22,4 +22,3 @@ DONE:
   * Spheres
   * Diffuse Lighting w/ shadows
   * Coloured lights
-  * Correct sphere intersections

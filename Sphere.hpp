@@ -14,15 +14,15 @@ struct Sphere {
     Sphere(const Pos3f &c, const float &r, const Material &m)
             : centre(c), radius(r), material(m) {}
 
-    bool ray_intersection(const Ray3f &ray, Ray3f &normal) const;
+    bool raycast(const Ray3f &ray, Ray3f &normal) const;
 
-    bool raycast(const Ray3f& ray, Vec3f &colour, const Scene& scene) const;
+    Vec3f surface_colour(const Ray3f &ray, const Ray3f &collision_normal, const Scene &scene) const;
 
     float nearest_distance(const Pos3f &position) const;
 
 private:
 
-    void displace_normal_outward(Ray3f &normal) const;
+    Ray3f displace_normal_outward(const Ray3f &normal) const;
 
 };
 

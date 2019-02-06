@@ -28,9 +28,9 @@ struct Scene {
 
     void clear();
 
-    bool ray_intersection(const Ray3f &ray, Sphere *&sphere_pointer, Ray3f &collision_normal) const;
+    bool raycast(const Ray3f &ray, Sphere *&sphere_pointer, Ray3f &collision_normal) const;
 
-    Vec3f raycast(const Ray3f &ray);
+    Vec3f surface_colour(const Ray3f &ray);
 
     void render(const size_t& width, const size_t& height, std::vector<Vec3f> &framebuffer);
 };
