@@ -3,32 +3,14 @@
 
 #include "Scene.hpp"
 
-void add_by_dist(Sphere *const sphere, const Pos3f &reference, decltype(Scene::spheres) &spheres) {
-    const float dist = sphere->nearest_distance(reference);
-    auto p = std::make_pair(sphere, dist);
-
-    auto prev = spheres.before_begin();
-    for (auto it = spheres.begin(); it != spheres.end(); it++) {
-        if (it->second > dist) {
-            break;
-        }
-        prev = it;
-    }
-    spheres.insert_after(prev, p);
-}
-
 /*
  * Insert a new sphere, ordering by distance from the camera.
  * Efficiency is worst/expected case linear for a single insertion,
  * thus quadratic for a sequence; not great.
  */
 void Scene::add_sphere(const Pos3f &position, const float &radius, const Material &material) {
-    auto sphere = new Sphere(position, radius, material);
-    add_by_dist(sphere, camera.position, spheres);
-}
-
-void Scene::add_sphere(const Sphere &sphere) {
-    add_sphere(sphere.centre, sphere.radius, sphere.material);
+    auto* sphere = new Sphere(position, radius, material);
+    spheres.push_back(sphere);
 }
 
 /*
@@ -38,69 +20,42 @@ void Scene::add_light(const Pos3f &position, const Vec3f &colour, const float &b
     lights.emplace_back(position, colour, brightness);
 }
 
-void Scene::add_light(const Light &light) {
-    add_light(light.position, light.colour, light.brightness);
-}
-
-
-/*
- * Remove and destroy the given sphere.
- */
-void Scene::remove_sphere(Sphere *sphere) {
-    auto comparator = [sphere](const std::pair<Sphere *const, float> &p) -> bool { return p.first == sphere; };
-    auto it = std::find_if(spheres.begin(), spheres.end(), comparator);
-
-    if (it != spheres.end()) {
-        spheres.remove(*it);
-        delete it->first;
-    }
-}
-
 /*
  * All spheres are destroyed.
  */
 void Scene::clear() {
     for (auto sphere : spheres) {
-        delete sphere.first;
+        delete sphere;
     }
     spheres.clear();
-}
-
-/*
- * Reorder the spheres in the current scene relative to the camera.
- * This is useful if the camera position changes.
- */
-void Scene::reorder() {
-    auto new_spheres = spheres;
-    spheres.clear();
-    for (auto sphere : new_spheres) {
-        add_by_dist(sphere.first, camera.position, spheres);
-    }
 }
 
 /*
  * Return whether the given ray intersects with any sphere in the scene,
- * returning the ray located at the first collision point if it exists,
- * normal to the surface at that point.
+ * returning. Additionally return:
+ *  * A pointer to the sphere which was hit, if any.
+ *  * A ray located at the first collision point if it exists,
+ *    normal to the surface at that point.
  *
  * Iterates though all objects in the scene to check for collisions,
  * which is not particularly efficient.
  */
-bool Scene::ray_intersects(const Ray3f &ray, Ray3f &collision_normal) const {
+bool Scene::ray_intersection(const Ray3f &ray, Sphere *&sphere_pointer, Ray3f &collision_normal) const {
     float dist = std::numeric_limits<float>::max();
-    Ray3f normal;
+    Ray3f current_collision_normal;
     bool collided = false;
 
     for (auto sphere : spheres) {
-       const bool current_coll = sphere.first->ray_intersects(ray, normal);
-       if (current_coll) {
-           collided = true;
-           const float current_dist = distance(ray.position, normal.position);
-           if (current_dist < dist) {
-               dist = current_dist;
-               collision_normal = normal;
-           }
-       }
+        const bool current_collided = sphere->ray_intersection(ray, current_collision_normal);
+        if (current_collided) {
+            collided = true;
+            const float current_dist = distance(ray.position, current_collision_normal.position);
+            if (current_dist < dist) {
+                dist = current_dist;
+                collision_normal = current_collision_normal;
+                sphere_pointer = sphere;
+            }
+        }
     }
 
     return collided;
@@ -112,11 +67,11 @@ bool Scene::ray_intersects(const Ray3f &ray, Ray3f &collision_normal) const {
  */
 Vec3f Scene::raycast(const Ray3f &ray) {
     Vec3f colour = this->background.diffuse_colour;
-    for (auto sphere : spheres) {
-        if (sphere.first->raycast(ray, colour, *this)) {
-            break;
-        }
-    }
+    Sphere *sphere_pointer;
+    Ray3f collision_normal;
+    if(ray_intersection(ray, sphere_pointer, collision_normal)) {
+        sphere_pointer->raycast(ray, colour, *this);
+    };
     return colour;
 }
 

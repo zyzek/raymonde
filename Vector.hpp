@@ -43,7 +43,7 @@ struct Vec {
     }
 
     Vec<D, T> position() const {
-        Pos<D, T> p();
+        Pos<D, T> p;
         for (size_t i = 0; i < D; i++) {
             p[i] = this[i];
         }
@@ -212,7 +212,7 @@ struct Pos {
     }
 
     Vec<D, T> vector() const {
-        Vec<D, T> v();
+        Vec<D, T> v;
         for (size_t i = 0; i < D; i++) {
             v[i] = this[i];
         }

@@ -8,7 +8,7 @@
  * returning the ray located at the first collision point if it exists,
  * normal to the surface at that point.
  */
-bool Sphere::ray_intersects(const Ray3f &ray, Ray3f &normal) const {
+bool Sphere::ray_intersection(const Ray3f &ray, Ray3f &normal) const {
     const Vec3f to_sphere = centre - ray.position;
 
     // If the whole sphere is behind the ray, there is no intersection point.
@@ -31,7 +31,7 @@ bool Sphere::ray_intersects(const Ray3f &ray, Ray3f &normal) const {
     // then there is only one intersection point; return the distance to the furthest one.
     // Otherwise use the nearest.
     const float semi_dist = std::sqrt(radius * radius - p_dist * p_dist);
-    if (semi_dist < MERGE_EPSILON || p_dist < radius) {
+    if (semi_dist < MERGE_EPSILON || to_sphere.length() < radius) {
         normal.position = (p.length() + semi_dist) * ray.direction.unit() + ray.position;
     } else {
         normal.position = (p.length() - semi_dist) * ray.direction.unit() + ray.position;
@@ -41,19 +41,25 @@ bool Sphere::ray_intersects(const Ray3f &ray, Ray3f &normal) const {
 }
 
 /*
+ * Move a ray slightly outwards from the origin.
+ * This is used to displace collision normals so tht spheres do not self-occlude.
+ */
+void Sphere::displace_normal_outward(Ray3f &normal) const {
+    Vec3f centre_to_normal = normal.position - centre;
+    normal.position = centre_to_normal + centre_to_normal.unit(INCIDENT_NORMAL_DISPLACEMENT) + centre;
+}
+
+/*
  * Cast a ray from an origin, returning the whether the collision
  * occurred, and colour of the first collision point with the sphere,
  * if it exists.
  */
 bool Sphere::raycast(const Ray3f &ray, Vec3f &colour, const Scene &scene) const {
     Ray3f collision_normal;
-    if (!ray_intersects(ray, collision_normal)) {
+    if (!ray_intersection(ray, collision_normal)) {
         return false;
     }
-
-    // Move the normal slightly out from the sphere so it doesn't self-occlude.
-    Vec3f centre_to_normal = collision_normal.position - centre;
-    collision_normal.position = centre_to_normal + centre_to_normal.unit(RAYTRACE_NORMAL_DISPLACEMENT) + centre;
+    displace_normal_outward(collision_normal);
 
     Vec3f surface_lighting(0, 0, 0);
 
@@ -61,7 +67,8 @@ bool Sphere::raycast(const Ray3f &ray, Vec3f &colour, const Scene &scene) const 
     for (auto light : scene.lights) {
         auto incident_ray = Ray3f(collision_normal.position, (light.position - collision_normal.position).unit());
         Ray3f incident_collision_normal;
-        bool collided = scene.ray_intersects(incident_ray, incident_collision_normal);
+        Sphere *sphere_pointer;
+        bool collided = scene.ray_intersection(incident_ray, sphere_pointer, incident_collision_normal);
 
         // If the ray never collided with geometry, the light wasn't occluded.
         // If the collision point is behind the light, no occlusion.
