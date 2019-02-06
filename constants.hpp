@@ -4,3 +4,5 @@
 
 // Points closer than this distance are considered the same point.
 #define MERGE_EPSILON 0.00001
+
+#define RAYTRACE_NORMAL_DISPLACEMENT 0.00001

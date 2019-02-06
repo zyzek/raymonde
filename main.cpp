@@ -62,18 +62,32 @@ void render(const size_t &width, const size_t &height, const char *out_path) {
     const float cam_fov = PI / 2.0f;
     Camera camera(cam_pos, cam_ori, cam_fov);
 
-    Vec3f background_colour = Vec3f(0.2, 0.7, 0.8);
+    Vec3f background_colour = Vec3f(0.0, 0.0, 0.0);
 
     Scene scene(camera, Material(background_colour));
 
-    // Objects to render
-    scene.add_sphere(Pos3f(10, -5, 16), 3.0, Material(Vec3f(0.4, 0.4, 0.3)));
-    scene.add_sphere(Pos3f(-5, 5, 13), 4.0, Material(Vec3f(0.8, 0.4, 0.8)));
-    scene.add_sphere(Pos3f(-2, 3, 20), 5.0, Material(Vec3f(0.2, 0.6, 0.3)));
+    // Colours
+    Vec3f white(1.0, 1.0, 1.0);
+    Vec3f red(1.0, 0.0, 0.0);
+    Vec3f green(0.0, 1.0, 0.0);
+    Vec3f blue(0.0, 0.0, 1.0);
 
-    // Light to render
-    scene.add_light(Pos3f(0, 10, 30), Vec3f(1.0, 0.0, 0.0), 100.0);
-    scene.add_light(Pos3f(0, -10, 10), Vec3f(0.0, 1.0, 0.0), 100.0);
+    // Objects to render
+    scene.add_sphere(Pos3f(-5, 5, 15), 3.0, Material(Vec3f(0.8, 0.4, 0.8)));
+    //scene.add_sphere(Pos3f(10, -5, 16), 3.0, Material(Vec3f(0.4, 0.4, 0.3)));
+    //scene.add_sphere(Pos3f(-2, 3, 20), 4.0, Material(Vec3f(0.2, 0.6, 0.3)));
+
+    for (int j = 0; j < 3; j++) {
+        for (int i = 0; i < 3; i++) {
+            scene.add_sphere(Pos3f((float)((i-1)*5.0), (float)((j-1)*5.0), 10), 1.0, Material(white));
+        }
+    }
+
+    // Lights
+    scene.add_light(Pos3f(0, 50, 15), red, 1500.0);
+    scene.add_light(Pos3f(0, -50, 5), green, 1500.0);
+    scene.add_light(Pos3f(50, 0, 15), blue, 1500.0);
+    scene.add_light(Pos3f(0, 0, 50), white, 1000.0);
 
     std::vector<Vec3f> framebuffer(width * height);
     scene.render(width, height, framebuffer);
@@ -93,8 +107,8 @@ void render(const size_t &width, const size_t &height, const char *out_path) {
 
 
 int main() {
-    const size_t width = 1024;
-    const size_t height = 786;
+    const size_t width = 1000;
+    const size_t height = 1000;
     char out_path[] = "./out.ppm";
     render(width, height, out_path);
     return 0;

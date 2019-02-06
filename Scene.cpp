@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <limits>
 
 #include "Scene.hpp"
 
@@ -81,14 +82,28 @@ void Scene::reorder() {
  * Return whether the given ray intersects with any sphere in the scene,
  * returning the ray located at the first collision point if it exists,
  * normal to the surface at that point.
+ *
+ * Iterates though all objects in the scene to check for collisions,
+ * which is not particularly efficient.
  */
-bool Scene::ray_intersects(const Ray3f &ray, Ray3f &normal) const {
+bool Scene::ray_intersects(const Ray3f &ray, Ray3f &collision_normal) const {
+    float dist = std::numeric_limits<float>::max();
+    Ray3f normal;
+    bool collided = false;
+
     for (auto sphere : spheres) {
-        if (sphere.first->ray_intersects(ray, normal)) {
-            break;
-        }
+       const bool current_coll = sphere.first->ray_intersects(ray, normal);
+       if (current_coll) {
+           collided = true;
+           const float current_dist = distance(ray.position, normal.position);
+           if (current_dist < dist) {
+               dist = current_dist;
+               collision_normal = normal;
+           }
+       }
     }
-    return true;
+
+    return collided;
 }
 
 /*

@@ -37,7 +37,7 @@ struct Scene {
 
     void reorder();
 
-    bool ray_intersects(const Ray3f &ray, Ray3f &normal) const;
+    bool ray_intersects(const Ray3f &ray, Ray3f &collision_normal) const;
 
     Vec3f raycast(const Ray3f &ray);
 

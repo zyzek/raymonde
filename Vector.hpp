@@ -113,7 +113,7 @@ T operator*(const Vec<D, T> &lhs, const Vec<D, T> &rhs) {
 template<size_t D, typename T>
 Vec<D, T> hadamard(Vec<D, T> l, const Vec<D, T> &r) {
     for (size_t i = 0; i < D; i++) {
-        l[i] += r[i];
+        l[i] *= r[i];
     }
     return l;
 }
