@@ -37,7 +37,7 @@ void render_sine(int width, int height, std::vector<Vec3f> &buffer) {
 /*
  * Render an image of the given dimensions into the provided framebuffer.
  */
-void render(const size_t &width, const size_t &height, std::vector<Vec3f> &buffer) {
+void render(const size_t &width, const size_t &height, std::vector<Vec3f> &buffer, const float interocular = 0) {
     // Scene setup
     const Pos3f cam_pos(0, 0, 0);
     const Vec3f cam_ori(0, 0, 1.0f);
@@ -75,8 +75,44 @@ void render(const size_t &width, const size_t &height, std::vector<Vec3f> &buffe
     scene.add_light(Pos3f(0, -50, 5), green, 1500.0);
     scene.add_light(Pos3f(50, 0, 15), blue, 1500.0);
 
-    scene.render(width, height, buffer);
+    // Render a side-by-side 3d rendering if the interocular distance is nonzero.
+    if (interocular == 0) {
+        scene.render(width, height, buffer);
+    } else {
+        // Use two buffers in case of odd resolutions.
+        const size_t left_width = width / 2;
+        const size_t right_width = width - left_width;
+        std::vector<Vec3f> left_buffer(left_width * height);
+        std::vector<Vec3f> right_buffer(left_width * height);
 
+        Vec3f eye_transformation(interocular / 2, 0, 0);
+        Pos3f orig_cam_pos = scene.camera.position;
+
+        // Render the left eye.
+        scene.camera.position = orig_cam_pos + eye_transformation;
+        scene.render(left_width, height, left_buffer);
+
+        // Now the right.
+        scene.camera.position = orig_cam_pos + -eye_transformation;
+        scene.render(right_width, height, right_buffer);
+
+        // Don't forget to reset the camera position.
+        scene.camera.position = orig_cam_pos;
+
+        // Stitch the views together into the output buffer.
+        // Left
+        for (size_t j = 0; j < height; j++) {
+            for (size_t i = 0; i < left_width; i++) {
+                buffer[i + j*width] = left_buffer[i + j*left_width];
+            }
+        }
+        // Right
+        for (size_t j = 0; j < height; j++) {
+            for (size_t i = 0; i < left_width; i++) {
+                buffer[i + left_width + j*width] = right_buffer[i + j*right_width];
+            }
+        }
+    }
 }
 
 float clamp_unit(float f) {
@@ -103,11 +139,11 @@ void output_ppm(const int &width, const int &height, const std::vector<Vec3f> &b
 
 int main() {
     char out_path[] = "./out.ppm";
-    const size_t width = 1000;
+    const size_t width = 2000;
     const size_t height = 1000;
 
     std::vector<Vec3f> buffer(width * height);
-    render(width, height, buffer);
+    render(width, height, buffer, 1);
     output_ppm(width, height, buffer, out_path);
 
     return 0;
