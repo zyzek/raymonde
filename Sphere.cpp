@@ -59,7 +59,7 @@ Vec3f Sphere::surface_colour(const Ray3f &ray, const Ray3f &collision_normal, co
 
     // For each light: cast a ray towards the light, checking if it hit something first.
     for (auto light : scene.lights) {
-        auto incident_ray = Ray3f(coll_normal.position, (light.position - coll_normal.position).unit());
+        auto incident_ray = Ray3f(coll_normal.position, (light->position - coll_normal.position).unit());
         Ray3f incident_collision_normal;
         Sphere *sphere_pointer;
         bool collided = scene.raycast(incident_ray, sphere_pointer, incident_collision_normal);
@@ -68,9 +68,9 @@ Vec3f Sphere::surface_colour(const Ray3f &ray, const Ray3f &collision_normal, co
         // If the collision point is behind the light, no occlusion.
         if (!collided ||
             distance(coll_normal.position, incident_collision_normal.position) >
-            distance(coll_normal.position, light.position)) {
+            distance(coll_normal.position, light->position)) {
             const float intensity = incident_ray.direction * coll_normal.direction; // These are both unit vectors.
-            surface_lighting = surface_lighting + (light.illumination(coll_normal.position) * intensity);
+            surface_lighting = surface_lighting + (light->illumination(coll_normal.position) * intensity);
         }
     }
 

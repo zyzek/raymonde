@@ -139,8 +139,8 @@ void output_ppm(const int &width, const int &height, const std::vector<Vec3f> &b
 
 int main() {
     char out_path[] = "./out.ppm";
-    const size_t width = 2000;
-    const size_t height = 1000;
+    const size_t width = 1000;
+    const size_t height = 500;
 
     std::vector<Vec3f> buffer(width * height);
     render(width, height, buffer, 1);

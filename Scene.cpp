@@ -17,7 +17,8 @@ void Scene::add_sphere(const Pos3f &position, const float &radius, const Materia
  * Add a new light to the scene
  */
 void Scene::add_light(const Pos3f &position, const Vec3f &colour, const float &brightness) {
-    lights.emplace_back(position, colour, brightness);
+    auto* light = new Light(position, colour, brightness);
+    lights.push_back(light);
 }
 
 /*
@@ -28,6 +29,11 @@ void Scene::clear() {
         delete sphere;
     }
     spheres.clear();
+
+    for (auto light : lights) {
+        delete light;
+    }
+    lights.clear();
 }
 
 /*

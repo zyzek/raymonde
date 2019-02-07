@@ -18,10 +18,14 @@ struct Scene {
     Material background;
     Vec3f ambient_colour;
     std::vector<Sphere *> spheres;
-    std::vector<Light> lights;
+    std::vector<Light *> lights;
 
     Scene(const Camera &c, const Material &b, const Vec3f &a)
             : camera(c), background(b), ambient_colour(a), spheres(), lights() {}
+
+    ~Scene() {
+        clear();
+    }
 
     void add_sphere(const Pos3f &position, const float &radius, const Material &material);
 
