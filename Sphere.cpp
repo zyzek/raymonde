@@ -52,24 +52,24 @@ Ray3f Sphere::displace_normal_outward(const Ray3f &normal) const {
  * Assuming a collision has occurred, pass in the ray and the collision normal
  * it induces on this sphere, and return the observed colour at that point.
  */
-Vec3f Sphere::surface_colour(const Ray3f &ray, const Ray3f &collision_normal, const Scene &scene) const {
+Vec3f Sphere::surface_colour(const Ray3f &incident_ray, const Ray3f &collision_normal, const Scene &scene) const {
     Ray3f coll_normal = displace_normal_outward(collision_normal);
 
     Vec3f surface_lighting = scene.ambient_colour;
 
     // For each light: cast a ray towards the light, checking if it hit something first.
     for (auto light : scene.lights) {
-        auto incident_ray = Ray3f(coll_normal.position, (light->position - coll_normal.position).unit());
-        Ray3f incident_collision_normal;
+        auto illumination_ray = Ray3f(coll_normal.position, (light->position - coll_normal.position).unit());
+        Ray3f shadow_collision_normal;
         Sphere *sphere_pointer;
-        bool collided = scene.raycast(incident_ray, sphere_pointer, incident_collision_normal);
+        bool collided = scene.raycast(illumination_ray, sphere_pointer, shadow_collision_normal);
 
         // If the ray never collided with geometry, the light wasn't occluded.
         // If the collision point is behind the light, no occlusion.
         if (!collided ||
-            distance(coll_normal.position, incident_collision_normal.position) >
+            distance(coll_normal.position, shadow_collision_normal.position) >
             distance(coll_normal.position, light->position)) {
-            const float intensity = incident_ray.direction * coll_normal.direction; // These are both unit vectors.
+            const float intensity = illumination_ray.direction * coll_normal.direction; // These are both unit vectors.
             surface_lighting += light->illumination(coll_normal.position) * intensity;
         }
     }

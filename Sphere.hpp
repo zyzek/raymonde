@@ -16,7 +16,7 @@ struct Sphere {
 
     bool raycast(const Ray3f &ray, Ray3f &normal) const;
 
-    Vec3f surface_colour(const Ray3f &ray, const Ray3f &collision_normal, const Scene &scene) const;
+    Vec3f surface_colour(const Ray3f &incident_ray, const Ray3f &collision_normal, const Scene &scene) const;
 
     float nearest_distance(const Pos3f &position) const;
 
