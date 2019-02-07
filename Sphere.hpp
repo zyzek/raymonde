@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Vector.hpp"
 #include "Material.hpp"
-#include "Ray.hpp"
 #include "Scene.hpp"
 
 struct Scene;

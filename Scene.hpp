@@ -4,11 +4,10 @@
 #include <utility>
 #include <vector>
 
+#include "Camera.hpp"
+#include "Material.hpp"
 #include "Vector.hpp"
 #include "Sphere.hpp"
-#include "Material.hpp"
-#include "Camera.hpp"
-#include "Ray.hpp"
 #include "Light.hpp"
 
 struct Sphere;

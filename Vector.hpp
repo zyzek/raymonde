@@ -290,3 +290,23 @@ std::ostream &operator<<(std::ostream &out, const Pos<D, T> &v) {
     out << ")";
     return out;
 }
+
+template<size_t DIM, typename T>
+struct Ray {
+    Pos<DIM, T> position;
+    Vec<DIM, T> direction;
+
+    Ray<DIM, T>()
+            : position(), direction() {}
+
+    Ray<DIM, T>(const Pos<DIM, T> &pos, const Vec<DIM, T> &dir)
+            : position(pos), direction(dir) {}
+};
+
+typedef Ray<3, float> Ray3f;
+
+template<size_t D, typename T>
+std::ostream &operator<<(std::ostream &out, const Ray<D, T> &r) {
+    out << "Ray(" << r.position << ", " << r.direction << ")";
+    return out;
+}

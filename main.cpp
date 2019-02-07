@@ -106,13 +106,11 @@ void render(const size_t &width, const size_t &height, std::vector<Vec3f> &buffe
         scene->camera.position = orig_cam_pos;
 
         // Stitch the views together into the output buffer.
-        // Left
         for (size_t j = 0; j < height; j++) {
             for (size_t i = 0; i < left_width; i++) {
                 buffer[i + j * width] = left_buffer[i + j * left_width];
             }
         }
-        // Right
         for (size_t j = 0; j < height; j++) {
             for (size_t i = 0; i < left_width; i++) {
                 buffer[i + left_width + j * width] = right_buffer[i + j * right_width];
