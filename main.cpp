@@ -34,10 +34,7 @@ void render_sine(int width, int height, std::vector<Vec3f> &buffer) {
     }
 }
 
-/*
- * Render an image of the given dimensions into the provided framebuffer.
- */
-void render(const size_t &width, const size_t &height, std::vector<Vec3f> &buffer, const float interocular = 0) {
+Scene *setup_scene() {
     // Scene setup
     const Pos3f cam_pos(0, 0, 0);
     const Vec3f cam_ori(0, 0, 1.0f);
@@ -45,7 +42,7 @@ void render(const size_t &width, const size_t &height, std::vector<Vec3f> &buffe
     Camera camera(cam_pos, cam_ori, cam_fov);
     Vec3f background_colour(0.0, 0.0, 0.0);
     Vec3f ambient_colour(0.05, 0.03, 0.04);
-    Scene scene(camera, Material(background_colour), ambient_colour);
+    auto scene = new Scene(camera, Material(background_colour), ambient_colour);
 
     // Colours
     Vec3f white(1.0, 1.0, 1.0);
@@ -54,30 +51,39 @@ void render(const size_t &width, const size_t &height, std::vector<Vec3f> &buffe
     Vec3f blue(0.0, 0.0, 1.0);
 
     // Objects to render
-    scene.add_sphere(Pos3f(-5, 5, 15), 3.0, Material(Vec3f(0.8, 0.4, 0.8)));
-    scene.add_sphere(Pos3f(-2, 3, 20), 4.0, Material(Vec3f(0.2, 0.6, 0.3)));
-    scene.add_sphere(Pos3f(10, -5, 16), 3.0, Material(Vec3f(0.4, 0.4, 0.3)));
+    scene->add_sphere(Pos3f(-5, 5, 15), 3.0, Material(Vec3f(0.8, 0.4, 0.8)));
+    scene->add_sphere(Pos3f(-2, 3, 20), 4.0, Material(Vec3f(0.2, 0.6, 0.3)));
+    scene->add_sphere(Pos3f(10, -5, 16), 3.0, Material(Vec3f(0.4, 0.4, 0.3)));
 
-    scene.add_sphere(Pos3f(10, 5, 30), 3.0, Material(white));
-    scene.add_sphere(Pos3f(12, 5, 30), 3.0, Material(white));
-    scene.add_sphere(Pos3f(10, 10, 30), 3.0, Material(white));
-    scene.add_sphere(Pos3f(12, 10, 30), 3.0, Material(white));
+    scene->add_sphere(Pos3f(10, 5, 30), 3.0, Material(white));
+    scene->add_sphere(Pos3f(12, 5, 30), 3.0, Material(white));
+    scene->add_sphere(Pos3f(10, 10, 30), 3.0, Material(white));
+    scene->add_sphere(Pos3f(12, 10, 30), 3.0, Material(white));
 
     for (int j = 0; j < 3; j++) {
         for (int i = 0; i < 3; i++) {
-            scene.add_sphere(Pos3f((float) ((i - 1) * 5.0), (float) ((j - 1) * 5.0), 10), 1.0, Material(white));
+            scene->add_sphere(Pos3f((float) ((i - 1) * 5.0), (float) ((j - 1) * 5.0), 10), 1.0, Material(white));
         }
     }
 
     // Lights
-    scene.add_light(Pos3f(2.5, 0, 10), red + blue + green / 4, 2.0);
-    scene.add_light(Pos3f(0, 50, 15), red, 1500.0);
-    scene.add_light(Pos3f(0, -50, 5), green, 1500.0);
-    scene.add_light(Pos3f(50, 0, 15), blue, 1500.0);
+    scene->add_light(Pos3f(2.5, 0, 10), red + blue + green / 4, 2.0);
+    scene->add_light(Pos3f(0, 50, 15), red, 1500.0);
+    scene->add_light(Pos3f(0, -50, 5), green, 1500.0);
+    scene->add_light(Pos3f(50, 0, 15), blue, 1500.0);
+
+    return scene;
+}
+
+/*
+ * Render an image of the given dimensions into the provided framebuffer.
+ */
+void render(const size_t &width, const size_t &height, std::vector<Vec3f> &buffer, const float interocular = 0) {
+    Scene *scene = setup_scene();
 
     // Render a side-by-side 3d rendering if the interocular distance is nonzero.
     if (interocular == 0) {
-        scene.render(width, height, buffer);
+        scene->render(width, height, buffer);
     } else {
         // Use two buffers in case of odd resolutions.
         const size_t left_width = width / 2;
@@ -86,33 +92,35 @@ void render(const size_t &width, const size_t &height, std::vector<Vec3f> &buffe
         std::vector<Vec3f> right_buffer(left_width * height);
 
         Vec3f eye_transformation(interocular / 2, 0, 0);
-        Pos3f orig_cam_pos = scene.camera.position;
+        Pos3f orig_cam_pos = scene->camera.position;
 
         // Render the left eye.
-        scene.camera.position = orig_cam_pos + eye_transformation;
-        scene.render(left_width, height, left_buffer);
+        scene->camera.position = orig_cam_pos + eye_transformation;
+        scene->render(left_width, height, left_buffer);
 
         // Now the right.
-        scene.camera.position = orig_cam_pos + -eye_transformation;
-        scene.render(right_width, height, right_buffer);
+        scene->camera.position = orig_cam_pos + -eye_transformation;
+        scene->render(right_width, height, right_buffer);
 
         // Don't forget to reset the camera position.
-        scene.camera.position = orig_cam_pos;
+        scene->camera.position = orig_cam_pos;
 
         // Stitch the views together into the output buffer.
         // Left
         for (size_t j = 0; j < height; j++) {
             for (size_t i = 0; i < left_width; i++) {
-                buffer[i + j*width] = left_buffer[i + j*left_width];
+                buffer[i + j * width] = left_buffer[i + j * left_width];
             }
         }
         // Right
         for (size_t j = 0; j < height; j++) {
             for (size_t i = 0; i < left_width; i++) {
-                buffer[i + left_width + j*width] = right_buffer[i + j*right_width];
+                buffer[i + left_width + j * width] = right_buffer[i + j * right_width];
             }
         }
     }
+
+    delete scene;
 }
 
 float clamp_unit(float f) {
