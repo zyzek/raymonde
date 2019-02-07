@@ -12,15 +12,16 @@
 * Area lights
 * Volumetrics
 * Physically-based material properties
+* Anisotropic surface properties (e.g. directional specularity, pearlescent colouring)
 * Orientable camera
 * Better way of composing scenes
 * Move to GPU
+* Toggle rendering modes (e.g. disable specularity)
 * Interactive viewport / Real-time rendering
 * Random pixel sampling: build up geometry with sample.
     - Intelligent ray tracing by a flood fill on the same object
     - preferentially find boundary (binary search for edge, then trace around outline)
     - incomplete areas get interpolated from surroundings until filled in
-
 
 DONE:
   * Spheres

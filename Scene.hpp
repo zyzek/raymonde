@@ -36,5 +36,5 @@ struct Scene {
 
     Vec3f surface_colour(const Ray3f &ray);
 
-    void render(const size_t& width, const size_t& height, std::vector<Vec3f> &framebuffer);
+    void render(const size_t &width, const size_t &height, std::vector<Vec3f> &framebuffer);
 };

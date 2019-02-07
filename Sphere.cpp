@@ -70,7 +70,7 @@ Vec3f Sphere::surface_colour(const Ray3f &ray, const Ray3f &collision_normal, co
             distance(coll_normal.position, incident_collision_normal.position) >
             distance(coll_normal.position, light->position)) {
             const float intensity = incident_ray.direction * coll_normal.direction; // These are both unit vectors.
-            surface_lighting = surface_lighting + (light->illumination(coll_normal.position) * intensity);
+            surface_lighting += light->illumination(coll_normal.position) * intensity;
         }
     }
 
@@ -81,14 +81,10 @@ Vec3f Sphere::surface_colour(const Ray3f &ray, const Ray3f &collision_normal, co
  * Return the nearest distance from the given point to the sphere's surface.
  */
 float Sphere::nearest_distance(const Pos3f &position) const {
-    const float dist = (centre - position).length();
-    return dist > radius ? dist - radius : radius - dist;
+    return std::abs((centre - position).length() - radius);
 }
 
 std::ostream &operator<<(std::ostream &out, const Sphere &sphere) {
-    out << "Sphere(";
-    out << sphere.centre << ", ";
-    out << sphere.radius << ", ";
-    out << ")";
+    out << "Sphere(" << sphere.centre << ", " << sphere.radius << ")";
     return out;
 }

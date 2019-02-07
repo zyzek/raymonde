@@ -99,7 +99,7 @@ void render(const size_t &width, const size_t &height, std::vector<Vec3f> &buffe
         scene->render(left_width, height, left_buffer);
 
         // Now the right.
-        scene->camera.position = orig_cam_pos + -eye_transformation;
+        scene->camera.position = orig_cam_pos - eye_transformation;
         scene->render(right_width, height, right_buffer);
 
         // Don't forget to reset the camera position.

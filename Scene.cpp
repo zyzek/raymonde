@@ -9,7 +9,7 @@
  * thus quadratic for a sequence; not great.
  */
 void Scene::add_sphere(const Pos3f &position, const float &radius, const Material &material) {
-    auto* sphere = new Sphere(position, radius, material);
+    auto *sphere = new Sphere(position, radius, material);
     spheres.push_back(sphere);
 }
 
@@ -17,7 +17,7 @@ void Scene::add_sphere(const Pos3f &position, const float &radius, const Materia
  * Add a new light to the scene
  */
 void Scene::add_light(const Pos3f &position, const Vec3f &colour, const float &brightness) {
-    auto* light = new Light(position, colour, brightness);
+    auto *light = new Light(position, colour, brightness);
     lights.push_back(light);
 }
 
@@ -74,7 +74,7 @@ bool Scene::raycast(const Ray3f &ray, Sphere *&sphere_pointer, Ray3f &collision_
 Vec3f Scene::surface_colour(const Ray3f &ray) {
     Sphere *sphere_pointer;
     Ray3f collision_normal;
-    if(raycast(ray, sphere_pointer, collision_normal)) {
+    if (raycast(ray, sphere_pointer, collision_normal)) {
         return sphere_pointer->surface_colour(ray, collision_normal, *this);
     };
     return this->background.diffuse_colour;

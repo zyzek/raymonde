@@ -25,6 +25,36 @@ struct Vec {
         return data_[i];
     }
 
+    Vec<D, T> &operator+=(const Vec<D, T> &rhs) {
+        for (size_t i = 0; i < D; i++) {
+            data_[i] += rhs[i];
+        }
+        return *this;
+    }
+
+    Vec<D, T> &operator-=(const Vec<D, T> &rhs) {
+        for (size_t i = 0; i < D; i++) {
+            data_[i] -= rhs[i];
+        }
+        return *this;
+    }
+
+    template<typename U>
+    Vec<D, T> &operator*=(const U &rhs) {
+        for (size_t i = 0; i < D; i++) {
+            data_[i] *= rhs;
+        }
+        return *this;
+    }
+
+    template<typename U>
+    Vec<D, T> &operator/=(const U &rhs) {
+        for (size_t i = 0; i < D; i++) {
+            data_[i] /= rhs;
+        }
+        return *this;
+    }
+
     T length() const {
         T result = T();
         for (size_t i = 0; i < D; i++) {
@@ -45,7 +75,7 @@ struct Vec {
     Vec<D, T> position() const {
         Pos<D, T> p;
         for (size_t i = 0; i < D; i++) {
-            p[i] = this[i];
+            p[i] = data_[i];
         }
         return p;
     }
@@ -71,6 +101,36 @@ struct Vec<3, T> {
     const T &operator[](const size_t i) const {
         assert(i < 3);
         return i <= 0 ? x : i == 1 ? y : z;
+    }
+
+    Vec<3, T> &operator+=(const Vec<3, T> &rhs) {
+        x += rhs.x;
+        y += rhs.y;
+        z += rhs.z;
+        return *this;
+    }
+
+    Vec<3, T> &operator-=(const Vec<3, T> &rhs) {
+        x -= rhs.x;
+        y -= rhs.y;
+        z -= rhs.z;
+        return *this;
+    }
+
+    template<typename U>
+    Vec<3, T> &operator*=(const U &rhs) {
+        x *= rhs;
+        y *= rhs;
+        z *= rhs;
+        return *this;
+    }
+
+    template<typename U>
+    Vec<3, T> &operator/=(const U &rhs) {
+        x /= rhs;
+        y /= rhs;
+        z /= rhs;
+        return *this;
     }
 
     T length() const {
@@ -121,27 +181,21 @@ Vec<D, T> hadamard(Vec<D, T> l, const Vec<D, T> &r) {
 // Vector sum
 template<size_t D, typename T>
 Vec<D, T> operator+(Vec<D, T> lhs, const Vec<D, T> &rhs) {
-    for (size_t i = 0; i < D; i++) {
-        lhs[i] += rhs[i];
-    }
+    lhs += rhs;
     return lhs;
 }
 
 // Vector difference
 template<size_t D, typename T>
 Vec<D, T> operator-(Vec<D, T> lhs, const Vec<D, T> &rhs) {
-    for (size_t i = 0; i < D; i++) {
-        lhs[i] -= rhs[i];
-    }
+    lhs -= rhs;
     return lhs;
 }
 
 // Multiplication by a scalar (left and right)
 template<size_t D, typename T, typename U>
 Vec<D, T> operator*(Vec<D, T> lhs, const U &rhs) {
-    for (size_t i = 0; i < D; i++) {
-        lhs[i] *= rhs;
-    }
+    lhs *= rhs;
     return lhs;
 }
 
@@ -153,9 +207,7 @@ Vec<D, T> operator*(const U &lhs, const Vec<D, T> &rhs) {
 // Division by a scalar
 template<size_t D, typename T, typename U>
 Vec<D, T> operator/(Vec<D, T> lhs, const U &rhs) {
-    for (size_t i = 0; i < D; i++) {
-        lhs[i] /= rhs;
-    }
+    lhs /= rhs;
     return lhs;
 }
 
@@ -191,8 +243,6 @@ std::ostream &operator<<(std::ostream &out, const Vec<D, T> &v) {
     return out;
 }
 
-
-// Positions are distinct from vectors.
 template<size_t D, typename T>
 struct Pos {
     Pos<D, T>() {
@@ -211,10 +261,24 @@ struct Pos {
         return data_[i];
     }
 
+    Pos<D, T> &operator+=(const Vec<D, T> &rhs) {
+        for (size_t i = 0; i < D; i++) {
+            data_[i] += rhs[i];
+        }
+        return *this;
+    }
+
+    Pos<D, T> &operator-=(const Vec<D, T> &rhs) {
+        for (size_t i = 0; i < D; i++) {
+            data_[i] -= rhs[i];
+        }
+        return *this;
+    }
+
     Vec<D, T> vector() const {
         Vec<D, T> v;
         for (size_t i = 0; i < D; i++) {
-            v[i] = this[i];
+            v[i] = data_[i];
         }
         return v;
     }
@@ -242,6 +306,20 @@ struct Pos<3, T> {
         return i <= 0 ? x : i == 1 ? y : z;
     }
 
+    Pos<3, T> &operator+=(const Vec<3, T> &rhs) {
+        x += rhs.x;
+        y += rhs.y;
+        z += rhs.z;
+        return *this;
+    }
+
+    Pos<3, T> &operator-=(const Vec<3, T> &rhs) {
+        x -= rhs.x;
+        y -= rhs.y;
+        z -= rhs.z;
+        return *this;
+    }
+
     Vec<3, T> vector() const {
         return Vec<3, T>(x, y, z);
     }
@@ -267,15 +345,19 @@ Vec<D, T> operator-(const Pos<D, T> &end, const Pos<D, T> &start) {
 // The sum of a vector and a position yields a new position.
 template<size_t D, typename T>
 Pos<D, T> operator+(Pos<D, T> pos, const Vec<D, T> &vec) {
-    for (size_t i = 0; i < D; i++) {
-        pos[i] += vec[i];
-    }
+    pos += vec;
     return pos;
 }
 
 template<size_t D, typename T>
 Pos<D, T> operator+(const Vec<D, T> &vec, const Pos<D, T> &pos) {
     return pos + vec;
+}
+
+template<size_t D, typename T>
+Pos<D, T> operator-(Pos<D, T> pos, const Vec<D, T> &vec) {
+    pos -= vec;
+    return pos;
 }
 
 template<size_t D, typename T>
