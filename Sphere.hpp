@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vector.hpp"
+#include "Geometry.hpp"
 #include "Material.hpp"
 #include "Scene.hpp"
 

@@ -8,7 +8,7 @@ include_directories(.)
 add_executable(raymonde
         main.cpp
         constants.hpp
-        Vector.hpp
+        Geometry.hpp
         Camera.hpp
         Light.hpp Light.cpp
         Material.hpp Material.cpp

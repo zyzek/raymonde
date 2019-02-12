@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "constants.hpp"
-#include "Vector.hpp"
+#include "Geometry.hpp"
 #include "Sphere.hpp"
 #include "Camera.hpp"
 #include "Scene.hpp"
@@ -53,6 +53,8 @@ Scene *setup_scene() {
     float specularity = 10.0;
 
     Material diffuse_white(white, 0.0*white, specularity);
+    Material specular_white(white, 1.0*white, specularity);
+
     Material sphere_1_mat(Vec3f(0.8, 0.4, 0.8), 0.1*white, specularity);
     Material sphere_2_mat(Vec3f(0.2, 0.6, 0.3), 0.8*white, specularity);
     Material sphere_3_mat(Vec3f(0.4, 0.4, 0.3), 0.6*white, specularity);
@@ -62,7 +64,7 @@ Scene *setup_scene() {
     scene->add_sphere(Pos3f(-2, 3, 20), 4.0, sphere_2_mat);
     scene->add_sphere(Pos3f(10, -5, 16), 3.0, sphere_3_mat);
 
-    scene->add_sphere(Pos3f(10, 5, 30), 3.0, diffuse_white);
+    scene->add_sphere(Pos3f(10, 5, 30), 3.0, specular_white);
     scene->add_sphere(Pos3f(12, 10, 30), 3.0, diffuse_white);
 
     for (int j = 0; j < 3; j++) {
@@ -150,8 +152,8 @@ void output_ppm(const int &width, const int &height, const std::vector<Vec3f> &b
 
 int main() {
     char out_path[] = "./out.ppm";
-    const size_t width = 1000;
-    const size_t height = 500;
+    const size_t width  = 2000;
+    const size_t height = 1000;
 
     std::vector<Vec3f> buffer(width * height);
     render(width, height, buffer, 1);

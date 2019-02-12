@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vector.hpp"
+#include "Geometry.hpp"
 
 struct Material {
     Vec3f diffuse_colour;

@@ -80,7 +80,7 @@ Vec3f Sphere::surface_colour(const Ray3f &incident_ray, const Ray3f &collision_n
             // Specular component: varies with the cosine of the angle between the incident ray (camera) and the
             // direction of light reflected across the surface normal. (Brighter if reflecting directly into the camera)
             const Vec3f reflected_ray = 2 * (-illumination_ray.direction * collision_normal.direction) * collision_normal.direction + illumination_ray.direction;
-            const float specular_intensity = pow(reflected_ray * incident_ray.direction, material.specularity);
+            const float specular_intensity = std::pow(reflected_ray * incident_ray.direction, material.specularity);
 
             const Vec3f diffuse = hadamard(surface_illumination * diffuse_intensity, material.diffuse_colour);
             const Vec3f specular = hadamard(surface_illumination * specular_intensity, material.specular_colour);

@@ -6,7 +6,7 @@
 
 #include "Camera.hpp"
 #include "Material.hpp"
-#include "Vector.hpp"
+#include "Geometry.hpp"
 #include "Sphere.hpp"
 #include "Light.hpp"
 
