@@ -6,12 +6,24 @@
 * Generalised object opacity, transparency, scattering
 * Meshes
 * Procedurally-defined objects (e.g. fractals)
+ - https://web.archive.org/web/20170810101655/http://graphics.cs.illinois.edu/sites/default/files/rtqjs.pdf
+ - https://linas.org/art-gallery/escape/ray.html
 * Textures (including various lighting maps)
 * Ambient occlusion
-* Indirect illumination
+* Indirect/Global illumination (path tracing)
 * Area lights
 * Volumetrics
-* Physically-based material properties
+* Physically-based lighting
+    - https://en.wikipedia.org/wiki/Bidirectional_reflectance_distribution_function
+    - https://en.wikipedia.org/wiki/Bidirectional_scattering_distribution_function
+    - https://en.wikipedia.org/wiki/Rendering_equation
+    - https://blog.selfshadow.com/publications/s2012-shading-course/
+    - https://blog.selfshadow.com/publications/s2015-shading-course/
+    - https://graphics.stanford.edu/papers/metro/metro.pdf
+    - https://schuttejoe.github.io/post/disneybsdf/
+    - https://schuttejoe.github.io/post/disneypostmortem/
+    - https://schuttejoe.github.io/post/vertexconnectionandmerging/
+* Gamma correction
 * Anisotropic surface properties (e.g. directional specularity, pearlescent colouring)
 * Orientable camera
 * Better way of composing scenes

@@ -4,9 +4,7 @@
 #include "Scene.hpp"
 
 /*
- * Insert a new sphere, ordering by distance from the camera.
- * Efficiency is worst/expected case linear for a single insertion,
- * thus quadratic for a sequence; not great.
+ * Insert a new sphere.
  */
 void Scene::add_sphere(const Pos3f &position, const float &radius, const Material &material) {
     auto *sphere = new Sphere(position, radius, material);
@@ -22,7 +20,7 @@ void Scene::add_light(const Pos3f &position, const Vec3f &colour, const float &b
 }
 
 /*
- * All spheres are destroyed.
+ * All spheres and lights are destroyed.
  */
 void Scene::clear() {
     for (auto sphere : spheres) {
@@ -77,7 +75,7 @@ Vec3f Scene::surface_colour(const Ray3f &ray) {
     if (raycast(ray, sphere_pointer, collision_normal)) {
         return sphere_pointer->surface_colour(ray, collision_normal, *this);
     };
-    return this->background.diffuse_colour;
+    return this->background_colour;
 }
 
 /*

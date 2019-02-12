@@ -40,9 +40,9 @@ Scene *setup_scene() {
     const Vec3f cam_ori(0, 0, 1.0f);
     const float cam_fov = PI / 2.0f;
     Camera camera(cam_pos, cam_ori, cam_fov);
-    Vec3f background_colour(0.0, 0.0, 0.0);
-    Vec3f ambient_colour(0.05, 0.03, 0.04);
-    auto scene = new Scene(camera, Material(background_colour), ambient_colour);
+    Vec3f background_colour(0.1, 0.06, 0.08);
+    Vec3f ambient_colour(0.1, 0.06, 0.08);
+    auto scene = new Scene(camera, background_colour, ambient_colour);
 
     // Colours
     Vec3f white(1.0, 1.0, 1.0);
@@ -50,19 +50,24 @@ Scene *setup_scene() {
     Vec3f green(0.0, 1.0, 0.0);
     Vec3f blue(0.0, 0.0, 1.0);
 
-    // Objects to render
-    scene->add_sphere(Pos3f(-5, 5, 15), 3.0, Material(Vec3f(0.8, 0.4, 0.8)));
-    scene->add_sphere(Pos3f(-2, 3, 20), 4.0, Material(Vec3f(0.2, 0.6, 0.3)));
-    scene->add_sphere(Pos3f(10, -5, 16), 3.0, Material(Vec3f(0.4, 0.4, 0.3)));
+    Material diffuse_white(white, 0.0, 0.0);
+    Material sphere_1_mat(Vec3f(0.8, 0.4, 0.8), 0.0, 0.0);
+    Material sphere_2_mat(Vec3f(0.2, 0.6, 0.3), 0.0, 0.0);
+    Material sphere_3_mat(Vec3f(0.4, 0.4, 0.3), 0.0, 0.0);
 
-    scene->add_sphere(Pos3f(10, 5, 30), 3.0, Material(white));
-    scene->add_sphere(Pos3f(12, 5, 30), 3.0, Material(white));
-    scene->add_sphere(Pos3f(10, 10, 30), 3.0, Material(white));
-    scene->add_sphere(Pos3f(12, 10, 30), 3.0, Material(white));
+    // Objects to render
+    scene->add_sphere(Pos3f(-5, 5, 15), 3.0, sphere_1_mat);
+    scene->add_sphere(Pos3f(-2, 3, 20), 4.0, sphere_2_mat);
+    scene->add_sphere(Pos3f(10, -5, 16), 3.0, sphere_3_mat);
+
+    scene->add_sphere(Pos3f(10, 5, 30), 3.0, diffuse_white);
+    scene->add_sphere(Pos3f(12, 5, 30), 3.0, diffuse_white);
+    scene->add_sphere(Pos3f(10, 10, 30), 3.0, diffuse_white);
+    scene->add_sphere(Pos3f(12, 10, 30), 3.0, diffuse_white);
 
     for (int j = 0; j < 3; j++) {
         for (int i = 0; i < 3; i++) {
-            scene->add_sphere(Pos3f((float) ((i - 1) * 5.0), (float) ((j - 1) * 5.0), 10), 1.0, Material(white));
+            scene->add_sphere(Pos3f((float) ((i - 1) * 5.0), (float) ((j - 1) * 5.0), 10), 1.0, diffuse_white);
         }
     }
 

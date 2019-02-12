@@ -14,13 +14,13 @@ struct Sphere;
 
 struct Scene {
     Camera camera;
-    Material background;
+    Vec3f background_colour;
     Vec3f ambient_colour;
     std::vector<Sphere *> spheres;
     std::vector<Light *> lights;
 
-    Scene(const Camera &c, const Material &b, const Vec3f &a)
-            : camera(c), background(b), ambient_colour(a), spheres(), lights() {}
+    Scene(const Camera &c, const Vec3f &b, const Vec3f &a)
+            : camera(c), background_colour(b), ambient_colour(a), spheres(), lights() {}
 
     ~Scene() {
         clear();
