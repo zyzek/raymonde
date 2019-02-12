@@ -7,7 +7,11 @@ include_directories(.)
 
 add_executable(raymonde
         main.cpp
-        Material.hpp
-        README.md
-        Sphere.hpp
-        Vector.hpp Scene.cpp Scene.hpp Camera.hpp constants.hpp Sphere.cpp Light.hpp Light.cpp)
+        constants.hpp
+        Vector.hpp
+        Camera.hpp
+        Light.hpp Light.cpp
+        Material.hpp Material.cpp
+        Sphere.hpp Sphere.cpp
+        Scene.hpp Scene.cpp
+        )

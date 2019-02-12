@@ -51,11 +51,15 @@ Ray3f Sphere::displace_normal_outward(const Ray3f &normal) const {
 /*
  * Assuming a collision has occurred, pass in the ray and the collision normal
  * it induces on this sphere, and return the observed colour at that point.
+ *
+ * Input vectors are assumed to be of unit length.
  */
 Vec3f Sphere::surface_colour(const Ray3f &incident_ray, const Ray3f &collision_normal, const Scene &scene) const {
     Ray3f coll_normal = displace_normal_outward(collision_normal);
 
+    //Vec3f surface_lighting = material.compute_ambient(scene.ambient_colour);
     Vec3f surface_lighting = scene.ambient_colour;
+    Vec3f surface_lighting_spec(0,0,0);
 
     // For each light: cast a ray towards the light, checking if it hit something first.
     for (auto light : scene.lights) {
@@ -69,12 +73,23 @@ Vec3f Sphere::surface_colour(const Ray3f &incident_ray, const Ray3f &collision_n
         if (!collided ||
             distance(coll_normal.position, shadow_collision_normal.position) >
             distance(coll_normal.position, light->position)) {
-            const float intensity = illumination_ray.direction * coll_normal.direction; // These are both unit vectors.
-            surface_lighting += light->illumination(coll_normal.position) * intensity;
+
+            const Vec3f surface_illumination = light->illumination(collision_normal.position);
+            const float diffuse_intensity = illumination_ray.direction * collision_normal.direction; // These are both unit vectors.
+
+            // Specular component: varies with the cosine of the angle between the incident ray (camera) and the
+            // direction of light reflected across the surface normal. (Brighter if reflecting directly into the camera)
+            const Vec3f reflected_ray = 2 * (-illumination_ray.direction * collision_normal.direction) * collision_normal.direction + illumination_ray.direction;
+            const float specular_intensity = pow(reflected_ray * incident_ray.direction, material.specularity);
+
+            const Vec3f diffuse = hadamard(surface_illumination * diffuse_intensity, material.diffuse_colour);
+            const Vec3f specular = hadamard(surface_illumination * specular_intensity, material.specular_colour);
+            surface_lighting += diffuse;
+            surface_lighting_spec += specular;
         }
     }
 
-    return hadamard(surface_lighting, material.diffuse_colour);
+    return hadamard(surface_lighting, material.diffuse_colour) + hadamard(surface_lighting_spec, material.specular_colour);
 }
 
 /*

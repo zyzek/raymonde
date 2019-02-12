@@ -93,7 +93,7 @@ void Scene::render(const size_t &width, const size_t &height, std::vector<Vec3f>
         const float y = (j - height / 2.0f) * y_comp;
         for (ssize_t i = 0; i < width; i++) {
             const float x = (i - width / 2.0f) * x_comp;
-            Ray3f ray = Ray3f(camera.position, Vec3f(x, y, camera.plane_distance));
+            Ray3f ray = Ray3f(camera.position, Vec3f(x, y, camera.plane_distance).unit());
             framebuffer[i + j * width] = surface_colour(ray);
         }
     }

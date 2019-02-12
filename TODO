@@ -1,4 +1,3 @@
-* Specular Highlights
 * Describe derivation of mathematical bits in comments
 * Reflections (maybe with a fuzziness parameter? Is that even possible? Render surface to texture then blur?)
 * Environment maps
@@ -37,7 +36,5 @@
 
 DONE:
   * Spheres
-  * Diffuse Lighting w/ shadows
-  * Coloured lights
-  * Ambient light
+  * Phong lighting with/ shadows
   * Stereoscopic rendering
