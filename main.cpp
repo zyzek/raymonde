@@ -52,12 +52,12 @@ Scene *setup_scene() {
 
     float specularity = 10.0;
 
-    Material diffuse_white(white, 0.0*white, specularity);
-    Material specular_white(white, 1.0*white, specularity);
+    Material diffuse_white(white, 0.0 * white, specularity);
+    Material specular_white(white, 1.0 * white, specularity);
 
-    Material sphere_1_mat(Vec3f(0.8, 0.4, 0.8), 0.1*white, specularity);
-    Material sphere_2_mat(Vec3f(0.2, 0.6, 0.3), 0.8*white, specularity);
-    Material sphere_3_mat(Vec3f(0.4, 0.4, 0.3), 0.6*white, specularity);
+    Material sphere_1_mat(Vec3f(0.8, 0.4, 0.8), 0.1 * white, specularity);
+    Material sphere_2_mat(Vec3f(0.2, 0.6, 0.3), 0.8 * white, specularity);
+    Material sphere_3_mat(Vec3f(0.4, 0.4, 0.3), 0.6 * white, specularity);
 
     // Objects to render
     scene->add_sphere(Pos3f(-5, 5, 15), 3.0, sphere_1_mat);
@@ -152,7 +152,7 @@ void output_ppm(const int &width, const int &height, const std::vector<Vec3f> &b
 
 int main() {
     char out_path[] = "./out.ppm";
-    const size_t width  = 2000;
+    const size_t width = 2000;
     const size_t height = 1000;
 
     std::vector<Vec3f> buffer(width * height);

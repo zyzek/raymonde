@@ -392,3 +392,178 @@ std::ostream &operator<<(std::ostream &out, const Ray<D, T> &r) {
     out << "Ray(" << r.position << ", " << r.direction << ")";
     return out;
 }
+
+/*
+template<typename T>
+struct Quaternion {
+    T t, x, y, z;
+
+    Quaternion<T>()
+            : t(), x(), y(), z() {}
+
+    Quaternion<T>(const T &_t, const T &_x, const T &_y, const T &_z)
+            : t(_t), x(_x), y(_y), z(_z) {}
+
+    Quaternion<T> &operator+=(const Quaternion<T> &rhs) {
+        t += rhs.t;
+        x += rhs.x;
+        y += rhs.y;
+        z += rhs.z;
+        return *this;
+    }
+
+    Quaternion<T> &operator-=(const Quaternion<T> &rhs) {
+        t -= rhs.t;
+        x -= rhs.x;
+        y -= rhs.y;
+        z -= rhs.z;
+        return *this;
+    }
+
+    template<typename U>
+    Quaternion<T> &operator+=(const U &rhs) {
+        t += rhs;
+        return *this;
+    }
+
+    template<typename U>
+    Quaternion<T> &operator-=(const U &rhs) {
+        t -= rhs;
+        return *this;
+    }
+
+    Quaternion<T> &operator*=(const Quaternion<T> &rhs) {
+        t = t * rhs.t - x*rhs.x - y*rhs.y - z*rhs.z;
+        x = t * rhs.x + x * rhs.t + y * rhs.z - z * rhs.y;
+        y = t * rhs.y + y * rhs.t + z * rhs.x - x * rhs.z;
+        z = t * rhs.z + z * rhs.t + x * rhs.y - y * rhs.x;
+        return *this;
+    }
+
+    template<typename U>
+    Quaternion<T> &operator*=(const U &rhs) {
+        t *= rhs;
+        x *= rhs;
+        y *= rhs;
+        z *= rhs;
+        return *this;
+    }
+
+    template<typename U>
+    Quaternion<T> &operator/=(const U &rhs) {
+        t /= rhs;
+        x /= rhs;
+        y /= rhs;
+        z /= rhs;
+        return *this;
+    }
+
+    T length() const {
+        return std::sqrt(t * t + x * x + y * y + z * z);
+    }
+
+    Quaternion<T> &normalise(T l = 1) {
+        *this = *this * (l / length());
+        return *this;
+    }
+
+    Quaternion<T> unit(T l = 1) const {
+        return *this * (l / length());
+    }
+
+    Quaternion<T> conjugate() const {
+        return Quaternion<T>(t, -x, -y, -z);
+    }
+
+    Quaternion<T> pure() const {
+        return Quaternion<T>(0, x, y, z);
+    }
+
+    Quaternion<T> inverse() const {
+        return conjugate() / (t * t + x * x + y * y + z * z);
+    }
+};
+
+template<typename T>
+Quaternion<T> operator+(Quaternion<T> lhs, const Quaternion<T> &rhs) {
+    lhs += rhs;
+    return lhs;
+}
+
+template<typename T>
+Quaternion<T> operator-(Quaternion<T> lhs, const Quaternion<T> &rhs) {
+    lhs -= rhs;
+    return lhs;
+}
+
+template<typename T, typename U>
+Quaternion<T> operator+(Quaternion<T> lhs, const U &rhs) {
+    lhs += rhs;
+    return lhs;
+}
+
+template<typename T, typename U>
+Quaternion<T> operator+(const U &lhs, const Quaternion<T> &rhs) {
+    return rhs + lhs;
+}
+
+template<typename T, typename U>
+Quaternion<T> operator-(Quaternion<T> lhs, const U &rhs) {
+    lhs -= rhs;
+    return lhs;
+}
+
+template<typename T, typename U>
+Quaternion<T> operator-(const U &lhs, const Quaternion<T> &rhs) {
+    return rhs + -lhs;
+}
+
+template<typename T>
+Quaternion<T> operator*(Quaternion<T> lhs, const T &rhs) {
+    lhs *= rhs;
+    return lhs;
+}
+
+template<typename T>
+Quaternion<T> operator*(const T &lhs, const Quaternion<T> &rhs) {
+    return rhs * lhs;
+}
+
+template<typename T, typename U>
+Quaternion<T> operator/(Quaternion<T> lhs, const U &rhs) {
+    lhs /= rhs;
+    return lhs;
+}
+
+template<typename T>
+Quaternion<T> operator-(const Quaternion<T> &q) {
+    return q * T(-1);
+}
+
+template<typename T>
+T inner_product(const Quaternion<T> &lhs, const Quaternion<T> &rhs) {
+    return lhs.t * rhs.t + lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
+}
+
+template<typename T>
+std::ostream &operator<<(std::ostream &out, const Quaternion<T> &q) {
+    out << "<" << q.t << " + " << q.x << "i + " << q.y << "j + " << q.z << "k>";
+    return out;
+}
+
+//
+// Return the vector resulting from rotating the given vector around axis by theta radians.
+// Assumes that axis is a pure quaternion (with real part 0)
+//
+template<typename T, typename U, typename V>
+Vec<3, T> rotate(const Vec<3, T> &v, const Quaternion<U> &axis, const V theta) {
+    const V half_theta = theta / 2;
+    const V c = std::cos(half_theta);
+    const Quaternion<U> s_a = std::sin(half_theta) * axis;
+    const Quaternion<T> q_v(0, v.x, v.y, v.z);
+    const Quaternion<T> r = (c + s_a) * q_v * (c - s_a);
+    return Vec<3, T>(r.x, r.y, r.z);
+}
+
+typedef Quaternion<float> Quatf;
+*/
