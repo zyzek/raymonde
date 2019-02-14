@@ -14,4 +14,4 @@ add_executable(raymonde
         Material.hpp Material.cpp
         Sphere.hpp Sphere.cpp
         Scene.hpp Scene.cpp
-        )
+        SinePlane.cpp SinePlane.hpp)

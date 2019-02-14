@@ -10,6 +10,8 @@
 #include "Camera.hpp"
 #include "Scene.hpp"
 
+#include <cmath>
+
 /*
  * The intensity at a given pixel of a sine wave that extends across the field.
  * Angle and offset are in radians, frequency is in cycles per pixel.

@@ -150,6 +150,18 @@ struct Vec<3, T> {
         return Pos<3, T>(x, y, z);
     }
 
+    Vec<2, T> xy() const {
+        return Vec<2, T>(x, y);
+    }
+
+    Vec<2, T> xz() const {
+        return Vec<2, T>(x, z);
+    }
+
+    Vec<2, T> yz() const {
+        return Vec<2, T>(y, z);
+    }
+
     T x, y, z;
 };
 
@@ -158,6 +170,70 @@ template<typename T>
 Vec<3, T> cross(const Vec<3, T> &v1, const Vec<3, T> &v2) {
     return Vec<3, T>(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);
 }
+
+typedef Vec<2, float> Vec2f;
+
+template<typename T>
+struct Vec<2, T> {
+    Vec<2, T>() : x(T()), y(T()) {}
+
+    Vec<2, T>(T X, T Y) : x(X), y(Y) {}
+
+    T &operator[](const size_t i) {
+        assert(i < 2);
+        return i <= 0 ? x : y;
+    }
+
+    const T &operator[](const size_t i) const {
+        assert(i < 2);
+        return i <= 0 ? x : y;
+    }
+
+    Vec<2, T> &operator+=(const Vec<2, T> &rhs) {
+        x += rhs.x;
+        y += rhs.y;
+        return *this;
+    }
+
+    Vec<2, T> &operator-=(const Vec<2, T> &rhs) {
+        x -= rhs.x;
+        y -= rhs.y;
+        return *this;
+    }
+
+    template<typename U>
+    Vec<2, T> &operator*=(const U &rhs) {
+        x *= rhs;
+        y *= rhs;
+        return *this;
+    }
+
+    template<typename U>
+    Vec<2, T> &operator/=(const U &rhs) {
+        x /= rhs;
+        y /= rhs;
+        return *this;
+    }
+
+    T length() const {
+        return std::sqrt(x * x + y * y);
+    }
+
+    Vec<2, T> &normalise(T l = 1) {
+        *this = *this * (l / length());
+        return *this;
+    }
+
+    Vec<2, T> unit(T l = 1) const {
+        return *this * (l / length());
+    }
+
+    Vec<2, T> position() const {
+        return Pos<2, T>(x, y);
+    }
+
+    T x, y;
+};
 
 // Dot product
 template<size_t D, typename T>
@@ -324,7 +400,57 @@ struct Pos<3, T> {
         return Vec<3, T>(x, y, z);
     }
 
+    Pos<2, T> xy() const {
+        return Pos<2, T>(x, y);
+    }
+
+    Pos<2, T> xz() const {
+        return Pos<2, T>(x, z);
+    }
+
+    Pos<2, T> yz() const {
+        return Pos<2, T>(y, z);
+    }
+
+
     T x, y, z;
+};
+
+typedef Pos<2, float> Pos2f;
+
+template<typename T>
+struct Pos<2, T> {
+    Pos<2, T>() : x(T()), y(T()) {}
+
+    Pos<2, T>(T X, T Y) : x(X), y(Y) {}
+
+    T &operator[](const size_t i) {
+        assert(i < 2);
+        return i <= 0 ? x : y;
+    }
+
+    const T &operator[](const size_t i) const {
+        assert(i < 2);
+        return i <= 0 ? x : y;
+    }
+
+    Pos<3, T> &operator+=(const Vec<2, T> &rhs) {
+        x += rhs.x;
+        y += rhs.y;
+        return *this;
+    }
+
+    Pos<3, T> &operator-=(const Vec<2, T> &rhs) {
+        x -= rhs.x;
+        y -= rhs.y;
+        return *this;
+    }
+
+    Vec<2, T> vector() const {
+        return Vec<3, T>(x, y);
+    }
+
+    T x, y;
 };
 
 template<size_t D, typename T>
